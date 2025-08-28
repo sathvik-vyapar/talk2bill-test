@@ -5,7 +5,11 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: '/vyapar-llm-arena/',  // This is necessary for GitHub Pages
+  base: '/vyapar-llm-arena/',
+  build: {
+    outDir: 'docs',
+    assetsDir: 'assets',
+  },
   server: {
     host: "::",
     port: 8080,
