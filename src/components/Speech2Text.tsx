@@ -18,6 +18,11 @@ interface TranscriptionResponse {
       translation: string;
     };
   };
+  s3_info: {
+    bucket: string;
+    key: string;
+    region?: string;
+  };
 }
 
 interface TranscriptionData {
@@ -27,6 +32,11 @@ interface TranscriptionData {
 }
 
 const AudioTranscription = () => {
+  const [s3Info, setS3Info] = useState<{
+    bucket: string;
+    key: string;
+    region?: string;
+  } | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -109,7 +119,12 @@ const AudioTranscription = () => {
       }
 
       const data: TranscriptionResponse = await response.json();
-      
+      setS3Info({
+        bucket: data.s3_info.bucket,
+        key: data.s3_info.key,
+        region: data.s3_info.region ?? "ap-south-1"
+      });
+
       setTranscriptions({
         whisperTranscription: { 
           text: data.data.whisper.transcription, 
@@ -164,7 +179,10 @@ const AudioTranscription = () => {
     };
 
     // console.log(corrections);
-    const data = transcriptions;
+    const data = {
+      ...transcriptions,
+      s3_info: s3Info
+    };
     console.log(data);
 
     try {

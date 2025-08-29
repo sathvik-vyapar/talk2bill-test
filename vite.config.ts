@@ -5,10 +5,9 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: '/vyapar-llm-arena/',
+  base: '/talk2bill-test/',  // Change this to match your repository name
   build: {
     outDir: 'docs',
-    assetsDir: 'assets',
   },
   server: {
     host: "::",
