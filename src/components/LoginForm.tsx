@@ -7,24 +7,47 @@ import { Label } from '@/components/ui/label';
 import { AlertCircle, LogIn } from 'lucide-react';
 
 interface LoginFormProps {
-  onLogin: () => void;
+  onLogin: (token: string) => void;  // Modified to pass token
 }
 
 const LoginForm = ({ onLogin }: LoginFormProps) => {
   const [credentials, setCredentials] = useState({
-    id: 'VYAPAR123',
-    password: 'VYAPAR123'
+    username: '',
+    password: ''
   });
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError('');
     
-    if (credentials.id === 'VYAPAR123' && credentials.password === 'VYAPAR123') {
-      onLogin();
-      setError('');
-    } else {
+    try {
+      const response = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      });
+
+      if (!response.ok) {
+        throw new Error('Invalid credentials');
+      }
+
+      const data = await response.json();
+      const token = data.data.data; // Adjust based on your API response structure
+      
+      // Store token in localStorage for persistence
+      localStorage.setItem('authToken', token);
+      
+      // Pass token to parent component
+      onLogin(token);
+    } catch (err) {
       setError('Invalid credentials. Please check your ID and password.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -43,13 +66,13 @@ const LoginForm = ({ onLogin }: LoginFormProps) => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="id">User ID</Label>
+              <Label htmlFor="username">Username</Label>
               <Input
-                id="id"
+                id="username"
                 type="text"
-                placeholder="Enter your ID"
-                value={credentials.id}
-                onChange={(e) => setCredentials(prev => ({ ...prev, id: e.target.value }))}
+                placeholder="Enter your username"
+                value={credentials.username}
+                onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
                 className="w-full"
               />
             </div>

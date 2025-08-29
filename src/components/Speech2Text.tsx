@@ -17,18 +17,26 @@ interface TranscriptionResponse {
       transcription: string;
       translation: string;
     };
-  };
-  s3_info: {
-    bucket: string;
-    key: string;
-    region?: string;
+    s3_info: {
+      bucket: string;
+      key: string;
+      region?: string;
+    };
   };
 }
 
-interface TranscriptionData {
+interface ModelOutput {
   text: string;
-  isIncorrect: boolean;  // renamed from isSelected to better reflect its purpose
-  correctedText: string;
+  isIncorrect: boolean;
+}
+
+interface TranscriptionState {
+  whisperTranscription: ModelOutput;
+  whisperTranslation: ModelOutput;
+  sarvamTranscription: ModelOutput;
+  sarvamTranslation: ModelOutput;
+  correctTranscription: string;
+  correctTranslation: string;
 }
 
 const AudioTranscription = () => {
@@ -44,16 +52,13 @@ const AudioTranscription = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
-  const [transcriptions, setTranscriptions] = useState<{
-    whisperTranscription: TranscriptionData;
-    whisperTranslation: TranscriptionData;
-    sarvamTranscription: TranscriptionData;
-    sarvamTranslation: TranscriptionData;
-  }>({
-    whisperTranscription: { text: '', isIncorrect: false, correctedText: '' },
-    whisperTranslation: { text: '', isIncorrect: false, correctedText: '' },
-    sarvamTranscription: { text: '', isIncorrect: false, correctedText: '' },
-    sarvamTranslation: { text: '', isIncorrect: false, correctedText: '' },
+  const [transcriptions, setTranscriptions] = useState<TranscriptionState>({
+    whisperTranscription: { text: '', isIncorrect: false },
+    whisperTranslation: { text: '', isIncorrect: false },
+    sarvamTranscription: { text: '', isIncorrect: false },
+    sarvamTranslation: { text: '', isIncorrect: false },
+    correctTranscription: '',
+    correctTranslation: '',
   });
 
   const startRecording = async () => {
@@ -111,6 +116,9 @@ const AudioTranscription = () => {
 
       const response = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill-upload', {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },  
         body: formData,
       });
 
@@ -120,32 +128,18 @@ const AudioTranscription = () => {
 
       const data: TranscriptionResponse = await response.json();
       setS3Info({
-        bucket: data.s3_info.bucket,
-        key: data.s3_info.key,
-        region: data.s3_info.region ?? "ap-south-1"
+        bucket: data.data.s3_info.bucket,
+        key: data.data.s3_info.key,
+        region: data.data.s3_info.region ?? "ap-south-1"
       });
 
       setTranscriptions({
-        whisperTranscription: { 
-          text: data.data.whisper.transcription, 
-          isIncorrect: false, 
-          correctedText: '' 
-        },
-        whisperTranslation: {
-          text: data.data.whisper.translation,
-          isIncorrect: false,
-          correctedText: ''
-        },
-        sarvamTranscription: { 
-          text: data.data.sarvam.transcription, 
-          isIncorrect: false, 
-          correctedText: '' 
-        },
-        sarvamTranslation: { 
-          text: data.data.sarvam.translation, 
-          isIncorrect: false, 
-          correctedText: '' 
-        },
+        whisperTranscription: { text: data.data.whisper.transcription, isIncorrect: false },
+        whisperTranslation: { text: data.data.whisper.translation, isIncorrect: false },
+        sarvamTranscription: { text: data.data.sarvam.transcription, isIncorrect: false },
+        sarvamTranslation: { text: data.data.sarvam.translation, isIncorrect: false },
+        correctTranscription: '',
+        correctTranslation: '',
       });
     } catch (err) {
       setError('Failed to process audio. Please try again.');
@@ -163,42 +157,41 @@ const AudioTranscription = () => {
     }
     // Reset transcriptions
     setTranscriptions({
-      whisperTranscription: { text: '', isIncorrect: false, correctedText: '' },
-      whisperTranslation: { text: '', isIncorrect: false, correctedText: '' },
-      sarvamTranscription: { text: '', isIncorrect: false, correctedText: '' },
-      sarvamTranslation: { text: '', isIncorrect: false, correctedText: '' },
+      whisperTranscription: { text: '', isIncorrect: false },
+      whisperTranslation: { text: '', isIncorrect: false },
+      sarvamTranscription: { text: '', isIncorrect: false },
+      sarvamTranslation: { text: '', isIncorrect: false },
+      correctTranscription: '',
+      correctTranslation: '',
     });
   };
 
   const handleSubmit = async () => {
-    const corrections = {
-      whisper_transcription: transcriptions.whisperTranscription.isIncorrect ? transcriptions.whisperTranscription.correctedText : null,
-      whisper_translation: transcriptions.whisperTranslation.isIncorrect ? transcriptions.whisperTranslation.correctedText : null,
-      sarvam_transcription: transcriptions.sarvamTranscription.isIncorrect ? transcriptions.sarvamTranscription.correctedText : null,
-      sarvam_translation: transcriptions.sarvamTranslation.isIncorrect ? transcriptions.sarvamTranslation.correctedText : null,
-    };
 
-    // console.log(corrections);
     const data = {
       ...transcriptions,
       s3_info: s3Info
     };
     console.log(data);
+    if (!s3Info) {
+      setError('Please process/record the audio first');
+      return;
+    }
+
+    if (transcriptions.correctTranscription === '' || transcriptions.correctTranslation === '') {
+      setError('Please enter the correct transcription and translation');
+      return;
+    }
 
     try {
-      const response = await fetch('YOUR_SUBMISSION_API_ENDPOINT', {
+      const response = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill-voice-verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         },
         body: JSON.stringify({
-          original: {
-            whisper_transcription: transcriptions.whisperTranscription.text,
-            whisper_translation: transcriptions.whisperTranslation.text,
-            sarvam_transcription: transcriptions.sarvamTranscription.text,
-            sarvam_translation: transcriptions.sarvamTranslation.text,
-          },
-          corrections: corrections
+          ...data
         }),
       });
 
@@ -206,6 +199,32 @@ const AudioTranscription = () => {
         throw new Error('Failed to submit transcriptions');
       }
 
+      const resetProcess = () => {
+        // Clear audio URL if it exists
+        if (audioUrl) {
+          URL.revokeObjectURL(audioUrl);
+        }
+        
+        // Reset all states to their initial values
+        setS3Info(null);
+        setIsRecording(false);
+        setIsProcessing(false);
+        setError(null);
+        setAudioUrl(null);
+        setTranscriptions({
+          whisperTranscription: { text: '', isIncorrect: false },
+          whisperTranslation: { text: '', isIncorrect: false },
+          sarvamTranscription: { text: '', isIncorrect: false },
+          sarvamTranslation: { text: '', isIncorrect: false },
+          correctTranscription: '',
+          correctTranslation: '',
+        });
+        
+        // Clear refs
+        mediaRecorderRef.current = null;
+        audioChunksRef.current = [];
+      };
+      resetProcess();
       console.log('Transcriptions submitted successfully');
     } catch (err) {
       setError('Failed to submit transcriptions. Please try again.');
@@ -214,17 +233,27 @@ const AudioTranscription = () => {
   };
 
   const handleTranscriptionChange = (
-    key: keyof typeof transcriptions,
-    field: keyof TranscriptionData,
-    value: string | boolean
+    field: keyof TranscriptionState,
+    value: string | boolean,
+    subField?: 'isIncorrect'
   ) => {
-    setTranscriptions(prev => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        [field]: value,
-      },
-    }));
+    setTranscriptions(prev => {
+      if (field === 'correctTranscription' || field === 'correctTranslation') {
+        return {
+          ...prev,
+          [field]: value as string,
+        };
+      }
+      
+      const modelOutput = prev[field] as ModelOutput;
+      return {
+        ...prev,
+        [field]: {
+          ...modelOutput,
+          [subField || 'text']: value,
+        },
+      };
+    });
   };
 
   return (
@@ -301,159 +330,132 @@ const AudioTranscription = () => {
             )}
           </div>
 
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
 
           {/* Transcription Results */}
           <div className="space-y-6 mt-6">
-            {/* Whisper Transcription */}
-            <div className="space-y-3 border p-4 rounded-lg">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">
-                  Whisper Transcription
-                </label>
-                <div className="flex items-center gap-2">
-                  <label htmlFor="whisperTranscription" className="text-sm text-gray-600">
-                    Needs Correction
-                  </label>
-                  <Checkbox
-                    id="whisperTranscription"
-                    checked={transcriptions.whisperTranscription.isIncorrect}
-                    onCheckedChange={(checked) => 
-                      handleTranscriptionChange('whisperTranscription', 'isIncorrect', checked as boolean)
-                    }
+            {/* Model Outputs */}
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                {/* Whisper Outputs */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-gray-700">Whisper Transcription</label>
+                    <div className="flex items-center gap-2">
+                      <label className="text-sm text-gray-600">Incorrect</label>
+                      <Checkbox
+                        checked={transcriptions.whisperTranscription.isIncorrect}
+                        onCheckedChange={(checked) => 
+                          handleTranscriptionChange('whisperTranscription', checked as boolean, 'isIncorrect')
+                        }
+                      />
+                    </div>
+                  </div>
+                  <Textarea
+                    value={transcriptions.whisperTranscription.text}
+                    readOnly
+                    className="bg-gray-50"
+                    rows={2}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-gray-700">Whisper Translation</label>
+                    <div className="flex items-center gap-2">
+                      <label className="text-sm text-gray-600">Incorrect</label>
+                      <Checkbox
+                        checked={transcriptions.whisperTranslation.isIncorrect}
+                        onCheckedChange={(checked) => 
+                          handleTranscriptionChange('whisperTranslation', checked as boolean, 'isIncorrect')
+                        }
+                        />
+                    </div>
+                  </div>
+                  <Textarea
+                    value={transcriptions.whisperTranslation.text}
+                    readOnly
+                    className="bg-gray-50"
+                    rows={2}
+                    />
+                </div>
+                {/* Sarvam Outputs */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-gray-700">Sarvam Transcription</label>
+                    <div className="flex items-center gap-2">
+                      <label className="text-sm text-gray-600">Incorrect</label>
+                      <Checkbox
+                        checked={transcriptions.sarvamTranscription.isIncorrect}
+                        onCheckedChange={(checked) => 
+                          handleTranscriptionChange('sarvamTranscription', checked as boolean, 'isIncorrect')
+                        }
+                        />
+                    </div>
+                  </div>
+                  <Textarea
+                    value={transcriptions.sarvamTranscription.text}
+                    readOnly
+                    className="bg-gray-50"
+                    rows={2}
+                    />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-gray-700">Sarvam Translation</label>
+                    <div className="flex items-center gap-2">
+                      <label className="text-sm text-gray-600">Incorrect</label>
+                      <Checkbox
+                        checked={transcriptions.sarvamTranslation.isIncorrect}
+                        onCheckedChange={(checked) => 
+                          handleTranscriptionChange('sarvamTranslation', checked as boolean, 'isIncorrect')
+                        }
+                        />
+                    </div>
+                  </div>
+                  <Textarea
+                    value={transcriptions.sarvamTranslation.text}
+                    readOnly
+                    className="bg-gray-50"
+                    rows={2}
                   />
                 </div>
               </div>
-              <Textarea
-                value={transcriptions.whisperTranscription.text}
-                readOnly
-                className="bg-gray-50"
-                rows={2}
-              />
-              {transcriptions.whisperTranscription.isIncorrect && (
-                <Textarea
-                  value={transcriptions.whisperTranscription.correctedText}
-                  onChange={(e) => handleTranscriptionChange('whisperTranscription', 'correctedText', e.target.value)}
-                  placeholder="Enter the correct transcription..."
-                  rows={2}
-                />
-              )}
             </div>
 
-            {/* Whisper Translation */}
-            <div className="space-y-3 border p-4 rounded-lg">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">
-                  Whisper Translation
-                </label>
-                <div className="flex items-center gap-2">
-                  <label htmlFor="whisperTranslation" className="text-sm text-gray-600">
-                    Needs Correction
-                  </label>
-                  <Checkbox
-                    id="whisperTranslation"
-                    checked={transcriptions.whisperTranslation.isIncorrect}
-                    onCheckedChange={(checked) => 
-                      handleTranscriptionChange('whisperTranslation', 'isIncorrect', checked as boolean)
-                    }
-                  />
+            {/* Correction Fields */}
+            <div className="space-y-4 border-t pt-4">
+              <h3 className="text-lg font-medium">Corrections</h3>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Correct Transcription</label>
+                  <Textarea
+                    value={transcriptions.correctTranscription}
+                    onChange={(e) => handleTranscriptionChange('correctTranscription', e.target.value)}
+                    placeholder="Enter the correct transcription..."
+                    rows={2}
+                    />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Correct Translation</label>
+                  <Textarea
+                    value={transcriptions.correctTranslation}
+                    onChange={(e) => handleTranscriptionChange('correctTranslation', e.target.value)}
+                    placeholder="Enter the correct translation..."
+                    rows={2}
+                    />
                 </div>
               </div>
-              <Textarea
-                value={transcriptions.whisperTranslation.text}
-                readOnly
-                className="bg-gray-50"
-                rows={2}
-              />
-              {transcriptions.whisperTranslation.isIncorrect && (
-                <Textarea
-                  value={transcriptions.whisperTranslation.correctedText}
-                  onChange={(e) => handleTranscriptionChange('whisperTranslation', 'correctedText', e.target.value)}
-                  placeholder="Enter the correct translation..."
-                  rows={2}
-                />
-              )}
             </div>
 
-            {/* Sarvam Original Transcription */}
-            <div className="space-y-3 border p-4 rounded-lg">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">
-                  Sarvam Transcription
-                </label>
-                <div className="flex items-center gap-2">
-                  <label htmlFor="sarvamTranscription" className="text-sm text-gray-600">
-                    Needs Correction
-                  </label>
-                  <Checkbox
-                    id="sarvamTranscription"
-                    checked={transcriptions.sarvamTranscription.isIncorrect}
-                    onCheckedChange={(checked) => 
-                      handleTranscriptionChange('sarvamTranscription', 'isIncorrect', checked as boolean)
-                    }
-                  />
-                </div>
-              </div>
-              <Textarea
-                value={transcriptions.sarvamTranscription.text}
-                readOnly
-                className="bg-gray-50"
-                rows={2}
-              />
-              {transcriptions.sarvamTranscription.isIncorrect && (
-                <Textarea
-                  value={transcriptions.sarvamTranscription.correctedText}
-                  onChange={(e) => handleTranscriptionChange('sarvamTranscription', 'correctedText', e.target.value)}
-                  placeholder="Enter the correct transcription..."
-                  rows={2}
-                />
-              )}
-            </div>
-
-            {/* Sarvam Translation */}
-            <div className="space-y-3 border p-4 rounded-lg">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">
-                  Sarvam Translation
-                </label>
-                <div className="flex items-center gap-2">
-                  <label htmlFor="sarvamTranslation" className="text-sm text-gray-600">
-                    Needs Correction
-                  </label>
-                  <Checkbox
-                    id="sarvamTranslation"
-                    checked={transcriptions.sarvamTranslation.isIncorrect}
-                    onCheckedChange={(checked) => 
-                      handleTranscriptionChange('sarvamTranslation', 'isIncorrect', checked as boolean)
-                    }
-                  />
-                </div>
-              </div>
-              <Textarea
-                value={transcriptions.sarvamTranslation.text}
-                readOnly
-                className="bg-gray-50"
-                rows={2}
-              />
-              {transcriptions.sarvamTranslation.isIncorrect && (
-                <Textarea
-                  value={transcriptions.sarvamTranslation.correctedText}
-                  onChange={(e) => handleTranscriptionChange('sarvamTranslation', 'correctedText', e.target.value)}
-                  placeholder="Enter the correct translation..."
-                  rows={2}
-                />
-              )}
-            </div>
-
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
             <Button
               onClick={handleSubmit}
               className="w-full mt-4"
               disabled={isProcessing || isRecording}
-            >
+              >
               Submit Transcriptions
             </Button>
           </div>

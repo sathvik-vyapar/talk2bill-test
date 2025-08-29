@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { ThumbsUp, ThumbsDown, Play, Clock, Zap, Maximize2, Minimize2 } from 'lucide-react';
+import { Play, Clock, Zap, Maximize2, Minimize2, Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 // const availableModels = [
 //   { id: 'gpt-3.5', name: 'GPT-3.5', specialization: 'General Purpose' },
@@ -37,8 +38,11 @@ const Playground = ({ preSelectedModel }: { preSelectedModel?: string | null }) 
   const [selectedModels, setSelectedModels] = useState<string[]>(preSelectedModel ? [preSelectedModel] : []);
   const [responses, setResponses] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [notes, setNotes] = useState<{[key: string]: string}>({});
+  const [globalCorrection, setGlobalCorrection] = useState('');
+  const [incorrectResponses, setIncorrectResponses] = useState<{[key: string]: boolean}>({});
   const [textareaRows, setTextareaRows] = useState(4);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleModelToggle = (modelId: string) => {
     setSelectedModels(prev =>
@@ -78,7 +82,7 @@ const Playground = ({ preSelectedModel }: { preSelectedModel?: string | null }) 
             const response = await fetch('https://analytics-staging.vyaparapp.in/talk2bill/extract-json-text', {  // You'll need to set up this endpoint
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
               },
               body: JSON.stringify({
                 modelName: modelId,
@@ -118,13 +122,70 @@ const Playground = ({ preSelectedModel }: { preSelectedModel?: string | null }) 
     }
   };
 
-  const handleFeedback = (modelId: string, type: 'helpful' | 'not-helpful') => {
-    console.log(`Feedback for ${modelId}: ${type}`);
-    // In a real app, this would be sent to analytics
+  const handleGlobalCorrectionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setGlobalCorrection(e.target.value);
   };
 
-  const handleNotesChange = (modelId: string, note: string) => {
-    setNotes(prev => ({ ...prev, [modelId]: note }));
+  const handleIncorrectToggle = (modelId: string, isIncorrect: boolean) => {
+    setIncorrectResponses(prev => ({
+      ...prev,
+      [modelId]: isIncorrect
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (globalCorrection.trim() === '') {
+      setError('Please enter the correct output');
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const submissionData = {
+        input: input.trim(),
+        responses: responses.map(response => ({
+          modelId: response.modelId,
+          modelName: response.modelName,
+          originalResponse: response.response,
+          isIncorrect: incorrectResponses[response.modelId] || false
+        })),
+        correctedOutput: globalCorrection.trim()
+      };
+      console.log(submissionData);
+
+      const response = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill-json-verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify(submissionData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit corrections');
+      }
+
+      // Reset the form
+      setInput('');
+      setSelectedModels([]);
+      setResponses([]);
+      setGlobalCorrection('');
+      setIncorrectResponses({});
+      
+    } catch (err) {
+      console.error('Error submitting corrections:', err);
+      throw err;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    // Reset the form
+    setInput('');
+    setSelectedModels([]);
+    setResponses([]);
+    setGlobalCorrection('');
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -267,47 +328,82 @@ const Playground = ({ preSelectedModel }: { preSelectedModel?: string | null }) 
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <pre className="whitespace-pre-wrap text-sm text-gray-800 font-mono">
-                        {response.response}
-                      </pre>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleFeedback(response.modelId, 'helpful')}
-                          className="flex items-center gap-1"
-                        >
-                          <ThumbsUp className="w-4 h-4" />
-                          Helpful
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleFeedback(response.modelId, 'not-helpful')}
-                          className="flex items-center gap-1"
-                        >
-                          <ThumbsDown className="w-4 h-4" />
-                          Not Useful
-                        </Button>
+                    <div className="space-y-3 border p-4 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium text-gray-700">
+                          Model Response
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <label htmlFor={`incorrect-${response.modelId}`} className="text-sm text-gray-600">
+                            Incorrect
+                          </label>
+                          <Checkbox
+                            id={`incorrect-${response.modelId}`}
+                            checked={incorrectResponses[response.modelId] || false}
+                            onCheckedChange={(checked) => 
+                              handleIncorrectToggle(response.modelId, checked as boolean)
+                            }
+                          />
+                        </div>
                       </div>
-                      
-                      <Textarea
-                        placeholder="Add your notes or feedback for this response..."
-                        value={notes[response.modelId] || ''}
-                        onChange={(e) => handleNotesChange(response.modelId, e.target.value)}
-                        rows={2}
-                        className="text-sm"
-                      />
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <pre className="whitespace-pre-wrap text-sm text-gray-800 font-mono">
+                          {response.response}
+                        </pre>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Global Correction and Buttons */}
+      {responses.length > 0 && (
+        <div className="space-y-6 mt-6">
+          <div className="space-y-3 border p-4 rounded-lg">
+            <label className="text-sm font-medium text-gray-700">
+              Correct Output
+            </label>
+            <Textarea
+              value={globalCorrection}
+              onChange={handleGlobalCorrectionChange}
+              placeholder="Enter the correct output here..."
+              rows={4}
+              className="w-full"
+            />
+          </div>
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          <div className="flex justify-end gap-4">
+            <Button
+              variant="outline"
+              onClick={handleCancel}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="flex items-center gap-2"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                'Submit Correction'
+              )}
+            </Button>
+          </div>
         </div>
       )}
     </div>

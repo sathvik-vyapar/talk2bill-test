@@ -76,10 +76,10 @@ const PlaygroundPrompts = ({ preSelectedModel }: { preSelectedModel?: string | n
       const modelResponses = await Promise.all(
         selectedModels.map(async (modelId) => {
           try {
-            const response = await fetch('https://analytics-staging.vyaparapp.in/talk2bill/extract-json-alt', {  // You'll need to set up this endpoint
+            const response = await fetch('https://analytics-staging.vyaparapp.in/talk2bill/extract-json-alt', {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
               },
               body: JSON.stringify({
                 modelName: modelId,
