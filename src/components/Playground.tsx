@@ -35,7 +35,12 @@ const dummyResponses = {
 
 const Playground = ({ preSelectedModel }: { preSelectedModel?: string | null }) => {
   const [input, setInput] = useState('');
-  const [selectedModels, setSelectedModels] = useState<string[]>(preSelectedModel ? [preSelectedModel] : []);
+  const [selectedModels, setSelectedModels] = useState<string[]>([
+    'gpt-4o-mini',
+    'gpt-3.5-turbo',
+    'gpt-4.1-nano',
+    'gemini-2.0-flash-lite'
+  ]);
   const [responses, setResponses] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [globalCorrection, setGlobalCorrection] = useState('');
@@ -79,10 +84,11 @@ const Playground = ({ preSelectedModel }: { preSelectedModel?: string | null }) 
       const modelResponses = await Promise.all(
         selectedModels.map(async (modelId) => {
           try {
-            const response = await fetch('https://analytics-staging.vyaparapp.in/talk2bill/extract-json-text', {  // You'll need to set up this endpoint
+            const response = await fetch('https://analytics-staging.vyaparapp.in/api/ps/extract-json-text', {  // You'll need to set up this endpoint
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
               },
               body: JSON.stringify({
                 modelName: modelId,

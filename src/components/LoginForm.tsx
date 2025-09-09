@@ -37,7 +37,7 @@ const LoginForm = ({ onLogin }: LoginFormProps) => {
       }
 
       const data = await response.json();
-      const token = data.data.data; // Adjust based on your API response structure
+      const token = data.data; // Adjust based on your API response structure
       
       // Store token in localStorage for persistence
       localStorage.setItem('authToken', token);

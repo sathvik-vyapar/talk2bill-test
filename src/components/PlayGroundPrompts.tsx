@@ -35,7 +35,12 @@ const dummyResponses = {
 const PlaygroundPrompts = ({ preSelectedModel }: { preSelectedModel?: string | null }) => {
   const [prompt, setPrompt] = useState('');
   const [userInput, setUserInput] = useState('');
-  const [selectedModels, setSelectedModels] = useState<string[]>(preSelectedModel ? [preSelectedModel] : []);
+  const [selectedModels, setSelectedModels] = useState<string[]>([
+    'gpt-4o-mini',
+    'gpt-3.5-turbo',
+    'gpt-4.1-nano',
+    'gemini-2.0-flash-lite'
+  ]);
   const [responses, setResponses] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [notes, setNotes] = useState<{[key: string]: string}>({});
@@ -76,10 +81,11 @@ const PlaygroundPrompts = ({ preSelectedModel }: { preSelectedModel?: string | n
       const modelResponses = await Promise.all(
         selectedModels.map(async (modelId) => {
           try {
-            const response = await fetch('https://analytics-staging.vyaparapp.in/talk2bill/extract-json-alt', {
+            const response = await fetch('https://analytics-staging.vyaparapp.in/api/ps/extract-json-alt', {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
               },
               body: JSON.stringify({
                 modelName: modelId,

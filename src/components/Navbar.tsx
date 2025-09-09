@@ -14,12 +14,12 @@ const Navbar = ({ onLogout, currentPage, onPageChange }: NavbarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { id: 'overview', label: 'Model Overview', icon: '📊' },
+    // { id: 'overview', label: 'Model Overview', icon: '📊' },
     { id: 'playground', label: 'Playground', icon: '🔍' },
     { id: 'playground-prompts', label: 'Playground Prompts', icon: '🔍' },
     { id: 'speech-to-text', label: 'Speech to Text', icon: '🎤' },
-    { id: 'use-cases', label: 'Use Cases', icon: '📈' },
-    { id: 'metrics', label: 'Metrics', icon: '📁' }
+    // { id: 'use-cases', label: 'Use Cases', icon: '📈' },
+    // { id: 'metrics', label: 'Metrics', icon: '📁' }
   ];
 
   return (
