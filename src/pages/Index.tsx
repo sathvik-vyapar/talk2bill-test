@@ -1,5 +1,19 @@
+/**
+ * Index.tsx
+ *
+ * Main application entry point and router.
+ * Handles:
+ * - User authentication state management
+ * - Session persistence (48-hour sessions stored in localStorage)
+ * - Page navigation between different sections
+ *
+ * @author Vyapar Team
+ * @version 2.0.0
+ */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+
+// Components
 import LoginForm from '@/components/LoginForm';
 import Navbar from '@/components/Navbar';
 import PlaygroundPrompts from '@/components/PlayGroundPrompts';
@@ -8,60 +22,155 @@ import ProductionInsights from '@/components/ProductionInsights';
 import DataScience from '@/components/DataScience';
 import Product from '@/components/Product';
 
-// Session duration: 48 hours in milliseconds
+// =============================================================================
+// CONSTANTS
+// =============================================================================
+
+/** Session duration: 48 hours in milliseconds */
 const SESSION_DURATION_MS = 48 * 60 * 60 * 1000;
 
-const Index = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentPage, setCurrentPage] = useState('playground-prompts');
-  const [isCheckingSession, setIsCheckingSession] = useState(true);
+/** localStorage keys for session management */
+const STORAGE_KEYS = {
+  AUTH_TOKEN: 'authToken',
+  LOGIN_TIMESTAMP: 'loginTimestamp',
+} as const;
 
-  // Check for existing valid session on mount
+/** Available pages/routes in the application */
+type PageId = 'playground-prompts' | 'speech-to-text' | 'prod-insights' | 'data-science' | 'product';
+
+/** Default page to show after login */
+const DEFAULT_PAGE: PageId = 'playground-prompts';
+
+// =============================================================================
+// HELPER FUNCTIONS
+// =============================================================================
+
+/**
+ * Checks if the current session is valid (within 48-hour window)
+ * @returns Object containing session validity and remaining time
+ */
+const checkSessionValidity = (): { isValid: boolean; remainingHours: number } => {
+  const authToken = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+  const loginTimestamp = localStorage.getItem(STORAGE_KEYS.LOGIN_TIMESTAMP);
+
+  if (!authToken || !loginTimestamp) {
+    return { isValid: false, remainingHours: 0 };
+  }
+
+  const loginTime = parseInt(loginTimestamp, 10);
+  const currentTime = Date.now();
+  const timeSinceLogin = currentTime - loginTime;
+  const remainingTime = SESSION_DURATION_MS - timeSinceLogin;
+
+  return {
+    isValid: timeSinceLogin < SESSION_DURATION_MS,
+    remainingHours: Math.max(0, Math.round(remainingTime / (1000 * 60 * 60))),
+  };
+};
+
+/**
+ * Clears all session data from localStorage
+ */
+const clearSessionData = (): void => {
+  localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+  localStorage.removeItem(STORAGE_KEYS.LOGIN_TIMESTAMP);
+};
+
+// =============================================================================
+// MAIN COMPONENT
+// =============================================================================
+
+/**
+ * Index Component
+ *
+ * The main application container that manages:
+ * - Authentication state with 48-hour persistent sessions
+ * - Navigation between different dashboard sections
+ * - Session validation on app load
+ */
+const Index: React.FC = () => {
+  // ---------------------------------------------------------------------------
+  // STATE
+  // ---------------------------------------------------------------------------
+
+  /** Whether user is currently logged in */
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  /** Currently active page/section */
+  const [currentPage, setCurrentPage] = useState<PageId>(DEFAULT_PAGE);
+
+  /** Loading state while checking session validity on mount */
+  const [isCheckingSession, setIsCheckingSession] = useState<boolean>(true);
+
+  // ---------------------------------------------------------------------------
+  // SESSION MANAGEMENT
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Check for existing valid session on component mount.
+   * Auto-logs in user if a valid session exists.
+   */
   useEffect(() => {
-    const checkSession = () => {
-      const authToken = localStorage.getItem('authToken');
-      const loginTimestamp = localStorage.getItem('loginTimestamp');
+    const initializeSession = (): void => {
+      const { isValid, remainingHours } = checkSessionValidity();
 
-      if (authToken && loginTimestamp) {
-        const loginTime = parseInt(loginTimestamp, 10);
-        const currentTime = Date.now();
-        const timeSinceLogin = currentTime - loginTime;
-
-        // Check if session is still valid (within 48 hours)
-        if (timeSinceLogin < SESSION_DURATION_MS) {
-          console.log('[SESSION] Valid session found, auto-logging in');
-          console.log(`[SESSION] Time remaining: ${Math.round((SESSION_DURATION_MS - timeSinceLogin) / (1000 * 60 * 60))} hours`);
-          setIsLoggedIn(true);
-        } else {
-          // Session expired, clear storage
-          console.log('[SESSION] Session expired, clearing storage');
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('loginTimestamp');
-        }
+      if (isValid) {
+        console.log('[SESSION] Valid session found, auto-logging in');
+        console.log(`[SESSION] Time remaining: ${remainingHours} hours`);
+        setIsLoggedIn(true);
+      } else {
+        // Session expired or doesn't exist - clear any stale data
+        console.log('[SESSION] No valid session found');
+        clearSessionData();
       }
+
       setIsCheckingSession(false);
     };
 
-    checkSession();
+    initializeSession();
   }, []);
 
-  const handleLogin = () => {
-    // Store login timestamp for 48-hour session
-    localStorage.setItem('loginTimestamp', Date.now().toString());
+  // ---------------------------------------------------------------------------
+  // EVENT HANDLERS
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Handles successful login.
+   * Stores login timestamp for 48-hour session tracking.
+   */
+  const handleLogin = useCallback((): void => {
+    localStorage.setItem(STORAGE_KEYS.LOGIN_TIMESTAMP, Date.now().toString());
     console.log('[SESSION] New login, session will expire in 48 hours');
     setIsLoggedIn(true);
-  };
+  }, []);
 
-  const handleLogout = () => {
-    // Clear all session data
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('loginTimestamp');
+  /**
+   * Handles user logout.
+   * Clears all session data and resets to default page.
+   */
+  const handleLogout = useCallback((): void => {
+    clearSessionData();
     console.log('[SESSION] User logged out, session cleared');
     setIsLoggedIn(false);
-    setCurrentPage('playground-prompts');
-  };
+    setCurrentPage(DEFAULT_PAGE);
+  }, []);
 
-  const renderCurrentPage = () => {
+  /**
+   * Handles page navigation.
+   */
+  const handlePageChange = useCallback((page: string): void => {
+    setCurrentPage(page as PageId);
+  }, []);
+
+  // ---------------------------------------------------------------------------
+  // PAGE RENDERING
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Renders the current page component based on currentPage state.
+   * Uses a switch statement for type safety and explicit mapping.
+   */
+  const renderCurrentPage = (): React.ReactNode => {
     switch (currentPage) {
       case 'playground-prompts':
         return <PlaygroundPrompts />;
@@ -74,35 +183,45 @@ const Index = () => {
       case 'product':
         return <Product />;
       default:
+        // Fallback to default page for unknown routes
         return <PlaygroundPrompts />;
     }
   };
 
-  // Show loading while checking session
+  // ---------------------------------------------------------------------------
+  // RENDER
+  // ---------------------------------------------------------------------------
+
+  // Show loading spinner while checking session validity
   if (isCheckingSession) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Checking session...</p>
         </div>
       </div>
     );
   }
 
+  // Show login form if not authenticated
   if (!isLoggedIn) {
     return <LoginForm onLogin={handleLogin} />;
   }
 
+  // Main authenticated layout
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Sticky Navigation Bar */}
       <div className="sticky top-0 z-50 bg-white border-b">
         <Navbar
           onLogout={handleLogout}
           currentPage={currentPage}
-          onPageChange={setCurrentPage}
+          onPageChange={handlePageChange}
         />
       </div>
+
+      {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {renderCurrentPage()}
       </main>

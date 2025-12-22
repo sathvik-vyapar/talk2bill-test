@@ -1,20 +1,74 @@
-import React, { useState } from 'react';
+/**
+ * PlayGroundPrompts.tsx
+ *
+ * Interactive playground for testing LLM system prompts with user inputs.
+ * Allows users to:
+ * - Select transaction types (expense, sale_invoice, payment_in, payment_out)
+ * - Auto-fill system prompts based on selected type
+ * - Test with sample inputs or custom text
+ * - View API responses with detailed debug logging
+ *
+ * @author Vyapar Team
+ * @version 2.0.0
+ */
+
+import React, { useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Play, Loader2, CheckCircle, XCircle, Bug, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
+import {
+  Play,
+  Loader2,
+  CheckCircle,
+  XCircle,
+  Bug,
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  Check
+} from 'lucide-react';
 
-// Debug log interface
+// =============================================================================
+// TYPE DEFINITIONS
+// =============================================================================
+
+/**
+ * Debug log entry for tracking API requests and responses
+ */
 interface DebugLog {
   timestamp: string;
   type: 'info' | 'request' | 'response' | 'error';
   message: string;
-  data?: any;
+  data?: unknown;
 }
 
-// System prompts for each transaction type
-const systemPrompts: Record<string, string> = {
+/**
+ * Available LLM model configuration
+ */
+interface ModelConfig {
+  id: string;
+  name: string;
+}
+
+// =============================================================================
+// CONSTANTS & CONFIGURATION
+// =============================================================================
+
+/** API endpoint for extracting JSON from user input */
+const API_ENDPOINT = 'https://analytics-staging.vyaparapp.in/api/ps/extract-json-alt';
+
+/** Available LLM models for testing */
+const AVAILABLE_MODELS: ModelConfig[] = [
+  { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash Lite' },
+  { id: 'gpt-4o-mini', name: 'GPT-4O Mini' },
+];
+
+/**
+ * System prompts for each transaction type.
+ * These prompts instruct the LLM on how to extract structured data from user input.
+ */
+const SYSTEM_PROMPTS: Record<string, string> = {
   expense: `Extract expense information from user input. Return ONLY valid JSON.
 
 RULES:
@@ -80,8 +134,11 @@ RESPONSE FORMAT:
 }`
 };
 
-// Sample user inputs for each transaction type - longer, realistic examples
-const sampleInputs: Record<string, string[]> = {
+/**
+ * Sample user inputs for each transaction type.
+ * These are realistic, multi-item examples in Hindi/English mix (Hinglish).
+ */
+const SAMPLE_INPUTS: Record<string, string[]> = {
   expense: [
     'Petrol 500 rupees, chai samosa 140 rupees, and parking 50 rupees - all transport expenses',
     'Bought office supplies - 2 reams paper 400, printer ink 1200, and stapler 150 from stationery shop',
@@ -109,70 +166,189 @@ const sampleInputs: Record<string, string[]> = {
   ]
 };
 
-const availableModels = [
-  { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash Lite' },
-  { id: 'gpt-4o-mini', name: 'GPT-4O Mini' },
-];
+/** Maximum characters to show in truncated sample button */
+const SAMPLE_TRUNCATE_LENGTH = 35;
 
-const PlaygroundPrompts = () => {
-  const [systemPrompt, setSystemPrompt] = useState('');
-  const [userInput, setUserInput] = useState('');
+// =============================================================================
+// HELPER FUNCTIONS
+// =============================================================================
+
+/**
+ * Truncates text and adds ellipsis if longer than max length
+ */
+const truncateText = (text: string, maxLength: number): string => {
+  return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+};
+
+/**
+ * Formats transaction type for display (e.g., "sale_invoice" -> "Sale Invoice")
+ */
+const formatTransactionType = (type: string): string => {
+  return type.replace('_', ' ');
+};
+
+/**
+ * Gets possible error causes based on HTTP status code
+ */
+const getErrorCauses = (status: number): string[] => {
+  const causeMap: Record<number, string[]> = {
+    404: ['Endpoint does not exist', 'Wrong URL path', 'API route not configured on server'],
+    401: ['Invalid or expired auth token', 'Token not present'],
+    403: ['Access forbidden', 'Insufficient permissions'],
+    500: ['Server error', 'Backend exception'],
+  };
+  return causeMap[status] || ['Unknown error'];
+};
+
+/**
+ * Gets CSS class for debug log badge based on log type
+ */
+const getLogBadgeClass = (type: DebugLog['type']): string => {
+  const classMap: Record<DebugLog['type'], string> = {
+    error: 'bg-red-500',
+    request: 'bg-blue-500',
+    response: 'bg-green-500',
+    info: 'bg-gray-500',
+  };
+  return classMap[type];
+};
+
+/**
+ * Gets CSS class for debug log container based on log type
+ */
+const getLogContainerClass = (type: DebugLog['type']): string => {
+  const classMap: Record<DebugLog['type'], string> = {
+    error: 'bg-red-100 border border-red-300',
+    request: 'bg-blue-50 border border-blue-200',
+    response: 'bg-green-50 border border-green-200',
+    info: 'bg-gray-100 border border-gray-200',
+  };
+  return classMap[type];
+};
+
+// =============================================================================
+// MAIN COMPONENT
+// =============================================================================
+
+/**
+ * PlaygroundPrompts Component
+ *
+ * Provides an interactive interface for testing LLM system prompts with various
+ * transaction types and user inputs. Includes comprehensive debug logging.
+ */
+const PlaygroundPrompts: React.FC = () => {
+  // ---------------------------------------------------------------------------
+  // STATE MANAGEMENT
+  // ---------------------------------------------------------------------------
+
+  // Form state
+  const [systemPrompt, setSystemPrompt] = useState<string>('');
+  const [userInput, setUserInput] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string | null>(null);
-  const [selectedModel, setSelectedModel] = useState('gemini-2.0-flash-lite');
-  const [response, setResponse] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [debugLogs, setDebugLogs] = useState<DebugLog[]>([]);
-  const [showDebugPanel, setShowDebugPanel] = useState(false);
-  const [copiedDebug, setCopiedDebug] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<string>(AVAILABLE_MODELS[0].id);
 
-  const addDebugLog = (type: DebugLog['type'], message: string, data?: any) => {
+  // API state
+  const [response, setResponse] = useState<unknown>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Debug state
+  const [debugLogs, setDebugLogs] = useState<DebugLog[]>([]);
+  const [showDebugPanel, setShowDebugPanel] = useState<boolean>(false);
+  const [copiedDebug, setCopiedDebug] = useState<boolean>(false);
+
+  // ---------------------------------------------------------------------------
+  // DEBUG LOGGING FUNCTIONS
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Adds a new entry to the debug log and console
+   */
+  const addDebugLog = useCallback((
+    type: DebugLog['type'],
+    message: string,
+    data?: unknown
+  ): void => {
     const log: DebugLog = {
       timestamp: new Date().toISOString(),
       type,
       message,
       data
     };
+
+    // Log to console for browser DevTools
     console.log(`[${type.toUpperCase()}] ${message}`, data || '');
+
+    // Add to state for UI display
     setDebugLogs(prev => [...prev, log]);
-  };
+  }, []);
 
-  const clearDebugLogs = () => {
+  /**
+   * Clears all debug logs
+   */
+  const clearDebugLogs = useCallback((): void => {
     setDebugLogs([]);
-  };
+  }, []);
 
-  const copyDebugLogs = () => {
-    const logsText = debugLogs.map(log =>
-      `[${log.timestamp}] [${log.type.toUpperCase()}] ${log.message}\n${log.data ? JSON.stringify(log.data, null, 2) : ''}`
-    ).join('\n\n');
+  /**
+   * Copies all debug logs to clipboard in readable format
+   */
+  const copyDebugLogs = useCallback((): void => {
+    const logsText = debugLogs
+      .map(log => {
+        const dataStr = log.data ? JSON.stringify(log.data, null, 2) : '';
+        return `[${log.timestamp}] [${log.type.toUpperCase()}] ${log.message}\n${dataStr}`;
+      })
+      .join('\n\n');
+
     navigator.clipboard.writeText(logsText);
     setCopiedDebug(true);
-    setTimeout(() => setCopiedDebug(false), 2000);
-  };
 
-  const handleTypeSelect = (type: string) => {
+    // Reset copied state after 2 seconds
+    setTimeout(() => setCopiedDebug(false), 2000);
+  }, [debugLogs]);
+
+  // ---------------------------------------------------------------------------
+  // EVENT HANDLERS
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Handles transaction type selection.
+   * Auto-fills the system prompt based on selected type.
+   */
+  const handleTypeSelect = useCallback((type: string): void => {
     setSelectedType(type);
-    setSystemPrompt(systemPrompts[type]);
+    setSystemPrompt(SYSTEM_PROMPTS[type]);
     setUserInput('');
     setResponse(null);
     setError(null);
-  };
+  }, []);
 
-  const handleSampleSelect = (sample: string) => {
+  /**
+   * Handles sample input selection.
+   * Fills the user input textarea with the selected sample.
+   */
+  const handleSampleSelect = useCallback((sample: string): void => {
     setUserInput(sample);
     setResponse(null);
     setError(null);
-  };
+  }, []);
 
-  const handleRun = async () => {
+  /**
+   * Executes the API call to test the prompt.
+   * Includes comprehensive debug logging for troubleshooting.
+   */
+  const handleRun = useCallback(async (): Promise<void> => {
+    // Validate inputs
     if (!systemPrompt.trim() || !userInput.trim()) return;
 
+    // Reset state
     setIsLoading(true);
     setError(null);
     setResponse(null);
     clearDebugLogs();
 
-    const apiUrl = 'https://analytics-staging.vyaparapp.in/api/ps/extract-json-alt';
+    // Prepare request
     const authToken = localStorage.getItem('authToken');
     const requestBody = {
       modelName: selectedModel,
@@ -180,11 +356,14 @@ const PlaygroundPrompts = () => {
       text: userInput.trim()
     };
 
-    // Log request details
+    // Log request details for debugging
     addDebugLog('info', 'Starting API request...');
-    addDebugLog('request', 'API URL', { url: apiUrl });
+    addDebugLog('request', 'API URL', { url: API_ENDPOINT });
     addDebugLog('request', 'Request Method', { method: 'POST' });
-    addDebugLog('request', 'Auth Token Present', { hasToken: !!authToken, tokenLength: authToken?.length || 0 });
+    addDebugLog('request', 'Auth Token Present', {
+      hasToken: !!authToken,
+      tokenLength: authToken?.length || 0
+    });
     addDebugLog('request', 'Request Headers', {
       'Content-Type': 'application/json',
       'Authorization': authToken ? `Bearer ${authToken.substring(0, 20)}...` : 'NO TOKEN'
@@ -194,7 +373,8 @@ const PlaygroundPrompts = () => {
     try {
       const startTime = performance.now();
 
-      const res = await fetch(apiUrl, {
+      // Make API call
+      const res = await fetch(API_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -203,9 +383,9 @@ const PlaygroundPrompts = () => {
         body: JSON.stringify(requestBody)
       });
 
-      const endTime = performance.now();
-      const duration = Math.round(endTime - startTime);
+      const duration = Math.round(performance.now() - startTime);
 
+      // Log response details
       addDebugLog('response', 'Response received', {
         status: res.status,
         statusText: res.statusText,
@@ -217,37 +397,34 @@ const PlaygroundPrompts = () => {
         }
       });
 
+      // Handle error responses
       if (!res.ok) {
-        // Try to get error body
-        let errorBody = null;
+        // Try to get error body for debugging
+        let errorBody: string | null = null;
         try {
           errorBody = await res.text();
           addDebugLog('error', 'Error response body', { body: errorBody });
-        } catch (e) {
-          addDebugLog('error', 'Could not read error body', { error: String(e) });
+        } catch {
+          addDebugLog('error', 'Could not read error body');
         }
 
         const errorMessage = `API error: ${res.status} ${res.statusText}`;
         addDebugLog('error', errorMessage, {
           status: res.status,
           statusText: res.statusText,
-          url: apiUrl,
-          possibleCauses: res.status === 404
-            ? ['Endpoint does not exist', 'Wrong URL path', 'API route not configured on server']
-            : res.status === 401
-            ? ['Invalid or expired auth token', 'Token not present']
-            : res.status === 500
-            ? ['Server error', 'Backend exception']
-            : ['Unknown error']
+          url: API_ENDPOINT,
+          possibleCauses: getErrorCauses(res.status)
         });
 
         setShowDebugPanel(true); // Auto-show debug panel on error
         throw new Error(errorMessage);
       }
 
+      // Parse and set successful response
       const data = await res.json();
       addDebugLog('response', 'Response data parsed successfully', data);
       setResponse(data);
+
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Request failed';
       addDebugLog('error', 'Request failed', {
@@ -256,48 +433,54 @@ const PlaygroundPrompts = () => {
       });
       setError(errorMessage);
       setShowDebugPanel(true); // Auto-show debug panel on error
+
     } finally {
       setIsLoading(false);
       addDebugLog('info', 'Request completed');
     }
-  };
+  }, [systemPrompt, userInput, selectedModel, addDebugLog, clearDebugLogs]);
+
+  // ---------------------------------------------------------------------------
+  // RENDER
+  // ---------------------------------------------------------------------------
 
   return (
     <div className="space-y-6">
+      {/* Page Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Prompt Playground</h1>
         <p className="text-gray-600">Test system prompts with different inputs</p>
       </div>
 
-      {/* Transaction Type Selection */}
+      {/* Transaction Type Selection Card */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Select Transaction Type</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-3">
-            {Object.keys(systemPrompts).map((type) => (
+            {Object.keys(SYSTEM_PROMPTS).map((type) => (
               <Button
                 key={type}
                 variant={selectedType === type ? 'default' : 'outline'}
                 onClick={() => handleTypeSelect(type)}
                 className="capitalize"
               >
-                {type.replace('_', ' ')}
+                {formatTransactionType(type)}
               </Button>
             ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* System Prompt */}
+      {/* System Prompt Card */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center justify-between">
             System Prompt
             {selectedType && (
               <Badge variant="secondary" className="capitalize">
-                {selectedType.replace('_', ' ')}
+                {formatTransactionType(selectedType)}
               </Badge>
             )}
           </CardTitle>
@@ -313,19 +496,21 @@ const PlaygroundPrompts = () => {
         </CardContent>
       </Card>
 
-      {/* User Input - Only show when transaction type is selected */}
+      {/* User Input Card - Only shows when transaction type is selected */}
       {selectedType ? (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">User Input</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Sample Inputs with Tooltips */}
-            {sampleInputs[selectedType] && (
+            {/* Sample Inputs with Hover Tooltips */}
+            {SAMPLE_INPUTS[selectedType] && (
               <div className="space-y-2">
-                <p className="text-sm text-gray-500">Sample inputs (hover to see full text):</p>
+                <p className="text-sm text-gray-500">
+                  Sample inputs (hover to see full text):
+                </p>
                 <div className="flex flex-wrap gap-2">
-                  {sampleInputs[selectedType].map((sample, idx) => (
+                  {SAMPLE_INPUTS[selectedType].map((sample, idx) => (
                     <div key={idx} className="relative group">
                       <Button
                         variant="outline"
@@ -334,13 +519,13 @@ const PlaygroundPrompts = () => {
                         className="text-xs max-w-[200px] truncate"
                         title={sample}
                       >
-                        {sample.length > 35 ? `${sample.substring(0, 35)}...` : sample}
+                        {truncateText(sample, SAMPLE_TRUNCATE_LENGTH)}
                       </Button>
-                      {/* Tooltip on hover */}
+                      {/* Tooltip shown on hover */}
                       <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-50 w-80 max-w-sm">
                         <div className="bg-gray-900 text-white text-xs rounded-lg p-3 shadow-lg">
                           {sample}
-                          <div className="absolute top-full left-4 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-gray-900"></div>
+                          <div className="absolute top-full left-4 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-gray-900" />
                         </div>
                       </div>
                     </div>
@@ -349,6 +534,7 @@ const PlaygroundPrompts = () => {
               </div>
             )}
 
+            {/* User Input Textarea */}
             <Textarea
               placeholder="Enter user input or select a sample above..."
               value={userInput}
@@ -356,14 +542,15 @@ const PlaygroundPrompts = () => {
               rows={4}
             />
 
-            {/* Model Selection & Run */}
+            {/* Model Selection & Run Button */}
             <div className="flex items-center gap-4">
               <select
                 value={selectedModel}
                 onChange={(e) => setSelectedModel(e.target.value)}
                 className="px-3 py-2 border rounded-md text-sm"
+                aria-label="Select model"
               >
-                {availableModels.map((model) => (
+                {AVAILABLE_MODELS.map((model) => (
                   <option key={model.id} value={model.id}>
                     {model.name}
                   </option>
@@ -386,17 +573,20 @@ const PlaygroundPrompts = () => {
           </CardContent>
         </Card>
       ) : (
+        /* Placeholder when no transaction type selected */
         <Card className="border-dashed border-2 border-gray-300">
           <CardContent className="py-12">
             <div className="text-center text-gray-500">
               <p className="text-lg font-medium">Select a transaction type above</p>
-              <p className="text-sm mt-1">Choose expense, sale invoice, payment in, or payment out to continue</p>
+              <p className="text-sm mt-1">
+                Choose expense, sale invoice, payment in, or payment out to continue
+              </p>
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Response */}
+      {/* Response Card - Shows API response or error */}
       {(response || error) && (
         <Card>
           <CardHeader>
@@ -428,11 +618,12 @@ const PlaygroundPrompts = () => {
         </Card>
       )}
 
-      {/* Debug Panel */}
+      {/* Debug Panel - Shows detailed API logs for troubleshooting */}
       {debugLogs.length > 0 && (
         <Card className={`border-2 ${error ? 'border-red-300 bg-red-50' : 'border-gray-300'}`}>
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
+              {/* Debug Panel Header - Clickable to toggle */}
               <CardTitle
                 className="text-lg flex items-center gap-2 cursor-pointer"
                 onClick={() => setShowDebugPanel(!showDebugPanel)}
@@ -448,6 +639,8 @@ const PlaygroundPrompts = () => {
                   <ChevronDown className="w-4 h-4 text-gray-500" />
                 )}
               </CardTitle>
+
+              {/* Debug Panel Actions */}
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -467,53 +660,38 @@ const PlaygroundPrompts = () => {
                     </>
                   )}
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={clearDebugLogs}
-                >
+                <Button variant="outline" size="sm" onClick={clearDebugLogs}>
                   Clear
                 </Button>
               </div>
             </div>
           </CardHeader>
+
+          {/* Debug Panel Content - Expandable */}
           {showDebugPanel && (
             <CardContent>
               <div className="space-y-2 max-h-[400px] overflow-y-auto">
                 {debugLogs.map((log, index) => (
                   <div
                     key={index}
-                    className={`p-3 rounded-lg text-sm font-mono ${
-                      log.type === 'error'
-                        ? 'bg-red-100 border border-red-300'
-                        : log.type === 'request'
-                        ? 'bg-blue-50 border border-blue-200'
-                        : log.type === 'response'
-                        ? 'bg-green-50 border border-green-200'
-                        : 'bg-gray-100 border border-gray-200'
-                    }`}
+                    className={`p-3 rounded-lg text-sm font-mono ${getLogContainerClass(log.type)}`}
                   >
+                    {/* Log Header */}
                     <div className="flex items-center gap-2 mb-1">
-                      <Badge
-                        className={`text-xs ${
-                          log.type === 'error'
-                            ? 'bg-red-500'
-                            : log.type === 'request'
-                            ? 'bg-blue-500'
-                            : log.type === 'response'
-                            ? 'bg-green-500'
-                            : 'bg-gray-500'
-                        }`}
-                      >
+                      <Badge className={`text-xs ${getLogBadgeClass(log.type)}`}>
                         {log.type.toUpperCase()}
                       </Badge>
                       <span className="text-xs text-gray-500">
                         {new Date(log.timestamp).toLocaleTimeString()}
                       </span>
                     </div>
+
+                    {/* Log Message */}
                     <p className={`font-medium ${log.type === 'error' ? 'text-red-700' : 'text-gray-800'}`}>
                       {log.message}
                     </p>
+
+                    {/* Log Data (if present) */}
                     {log.data && (
                       <pre className="mt-2 text-xs bg-white/50 p-2 rounded overflow-x-auto">
                         {JSON.stringify(log.data, null, 2)}
@@ -523,7 +701,7 @@ const PlaygroundPrompts = () => {
                 ))}
               </div>
 
-              {/* Quick Debug Info */}
+              {/* Troubleshooting Tips - Shown on error */}
               {error && (
                 <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <h4 className="font-semibold text-yellow-800 flex items-center gap-2 mb-2">
@@ -531,7 +709,10 @@ const PlaygroundPrompts = () => {
                     Troubleshooting Tips
                   </h4>
                   <ul className="text-sm text-yellow-700 space-y-1">
-                    <li>• Check if the API endpoint exists: <code className="bg-yellow-100 px-1 rounded">https://analytics-staging.vyaparapp.in/api/ps/extract-json-alt</code></li>
+                    <li>
+                      • Check if the API endpoint exists:{' '}
+                      <code className="bg-yellow-100 px-1 rounded">{API_ENDPOINT}</code>
+                    </li>
                     <li>• Verify your auth token is valid (check localStorage)</li>
                     <li>• Compare with production API URL if available</li>
                     <li>• Check browser Network tab for more details</li>
