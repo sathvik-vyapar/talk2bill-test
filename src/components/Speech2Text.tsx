@@ -114,7 +114,7 @@ const AudioTranscription = () => {
       const formData = new FormData();
       formData.append('file', audioBlob, 'recording.wav');
 
-      const response = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill-upload', {
+      const response = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill/talk2bill-upload', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -184,7 +184,7 @@ const AudioTranscription = () => {
     }
 
     try {
-      const response = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill-voice-verify', {
+      const response = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill/talk2bill-voice-verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1123,7 +1123,7 @@ const Product = () => {
       const requestStartTime = Date.now();
       timings.push({ step: 'api_request', duration: 0, startTime: requestStartTime });
 
-      const response = await fetch('https://analytics-staging.vyaparapp.in/api/ps/extract-json-text', {
+      const response = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill/extract-json-text', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1324,7 +1324,7 @@ const Product = () => {
       const formData = new FormData();
       formData.append('file', audioFile);
 
-      const uploadResponse = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill-upload', {
+      const uploadResponse = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill/talk2bill-upload', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -1359,7 +1359,7 @@ const Product = () => {
         status: 'processing',
       }));
 
-      const extractResponse = await fetch('https://analytics-staging.vyaparapp.in/api/ps/extract-json-text', {
+      const extractResponse = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill/extract-json-text', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

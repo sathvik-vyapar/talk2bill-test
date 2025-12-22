@@ -44,7 +44,7 @@ interface Credentials {
 // =============================================================================
 
 /** API endpoint for authentication */
-const AUTH_API_ENDPOINT = 'https://analytics-staging.vyaparapp.in/api/ps/talk2bill-login';
+const AUTH_API_ENDPOINT = 'https://analytics-staging.vyaparapp.in/api/ps/talk2bill/talk2bill-login';
 
 /** localStorage key for auth token */
 const AUTH_TOKEN_KEY = 'authToken';
