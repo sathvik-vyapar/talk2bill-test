@@ -14,13 +14,11 @@ const Navbar = ({ onLogout, currentPage, onPageChange }: NavbarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    // { id: 'overview', label: 'Model Overview', icon: '📊' },
-    { id: 'playground', label: 'Playground', icon: '🔍' },
-    { id: 'playground-prompts', label: 'Playground Prompts', icon: '🔍' },
+    { id: 'playground-prompts', label: 'Playground', icon: '🔍' },
     { id: 'speech-to-text', label: 'Speech to Text', icon: '🎤' },
     { id: 'prod-insights', label: 'Prod Insights', icon: '📈' },
-    // { id: 'use-cases', label: 'Use Cases', icon: '📈' },
-    // { id: 'metrics', label: 'Metrics', icon: '📁' }
+    { id: 'data-science', label: 'Data Science', icon: '🧠' },
+    { id: 'product', label: 'Product', icon: '🛠️' },
   ];
 
   return (

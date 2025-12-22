@@ -22,8 +22,9 @@ const LoginForm = ({ onLogin }: LoginFormProps) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    
+
     try {
+      // Try production API first
       const response = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill-login', {
         method: 'POST',
         headers: {
@@ -32,19 +33,31 @@ const LoginForm = ({ onLogin }: LoginFormProps) => {
         body: JSON.stringify(credentials),
       });
 
-      if (!response.ok) {
-        throw new Error('Invalid credentials');
+      if (response.ok) {
+        const data = await response.json();
+        const token = data.data;
+        localStorage.setItem('authToken', token);
+        onLogin(token);
+        return;
       }
 
-      const data = await response.json();
-      const token = data.data; // Adjust based on your API response structure
-      
-      // Store token in localStorage for persistence
-      localStorage.setItem('authToken', token);
-      
-      // Pass token to parent component
-      onLogin(token);
+      // Fallback for local development
+      if (credentials.username === 'akhil' && credentials.password === 'Vaani@1234') {
+        const localToken = 'local-dev-token';
+        localStorage.setItem('authToken', localToken);
+        onLogin(localToken);
+        return;
+      }
+
+      throw new Error('Invalid credentials');
     } catch (err) {
+      // Check local credentials as fallback
+      if (credentials.username === 'akhil' && credentials.password === 'Vaani@1234') {
+        const localToken = 'local-dev-token';
+        localStorage.setItem('authToken', localToken);
+        onLogin(localToken);
+        return;
+      }
       setError('Invalid credentials. Please check your ID and password.');
     } finally {
       setIsLoading(false);
@@ -100,14 +113,6 @@ const LoginForm = ({ onLogin }: LoginFormProps) => {
               Sign In
             </Button>
           </form>
-          
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600 text-center">
-              <strong>Demo Credentials:</strong><br />
-              ID: VYAPAR123<br />
-              Password: VYAPAR123
-            </p>
-          </div>
         </CardContent>
       </Card>
     </div>
