@@ -25,3 +25,9 @@ dist-ssr
 
 # Support code reference folder
 akhil-support-code/
+
+# Production data files
+vyapar.talk2bill_jobs.json
+
+# Claude settings
+.claude/

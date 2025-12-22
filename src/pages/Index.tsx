@@ -8,6 +8,7 @@ import PlaygroundPrompts from '@/components/PlayGroundPrompts';
 import AudioTranscription from '@/components/Speech2Text';
 import UseCases from '@/components/UseCases';
 import Metrics from '@/components/Metrics';
+import ProductionInsights from '@/components/ProductionInsights';
 
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -42,6 +43,8 @@ const Index = () => {
         return <UseCases />;
       case 'metrics':
         return <Metrics />;
+      case 'prod-insights':
+        return <ProductionInsights />;
       default:
         return <ModelOverview onNavigateToPlayground={handleNavigateToPlayground} />;
     }
