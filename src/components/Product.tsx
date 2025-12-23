@@ -1792,14 +1792,319 @@ const Product = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="prompts">System Prompts</TabsTrigger>
-          <TabsTrigger value="proposed-prompts">Proposed Prompts</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-7">
+          <TabsTrigger value="strategy">Strategy</TabsTrigger>
+          <TabsTrigger value="prompts">Prompts</TabsTrigger>
+          <TabsTrigger value="proposed-prompts">Proposed</TabsTrigger>
           <TabsTrigger value="testcases">Test Cases</TabsTrigger>
           <TabsTrigger value="api-testing">API Testing</TabsTrigger>
           <TabsTrigger value="metrics">Metrics</TabsTrigger>
           <TabsTrigger value="roadmap">Roadmap</TabsTrigger>
         </TabsList>
+
+        {/* Strategy Tab */}
+        <TabsContent value="strategy" className="space-y-6">
+          {/* Strategy Header */}
+          <Card className="bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-200">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-indigo-100 rounded-xl">
+                  <Target className="w-8 h-8 text-indigo-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">VAANI Strategy</h2>
+                  <p className="text-gray-600 mt-1">Voice-First Business Operating System for Indian MSMEs</p>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    <Badge className="bg-indigo-100 text-indigo-800">63M MSMEs Target</Badge>
+                    <Badge className="bg-purple-100 text-purple-800">10 Languages</Badge>
+                    <Badge className="bg-green-100 text-green-800">3x Faster Entry</Badge>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Mission & Vision */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="border-2 border-blue-200">
+              <CardHeader className="bg-blue-50">
+                <CardTitle className="flex items-center gap-2 text-blue-800">
+                  <Rocket className="w-5 h-5" />
+                  Mission
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                <p className="text-lg font-medium text-gray-900 italic">
+                  "Enable every Indian business owner to run their business in their own voice, in their own language, without barriers."
+                </p>
+                <div className="mt-4 space-y-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-blue-600" />
+                    <span>Language Barrier: 10+ Indian languages support</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-blue-600" />
+                    <span>Literacy Barrier: Voice-first interface</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-blue-600" />
+                    <span>Time Barrier: 3x faster data entry</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-blue-600" />
+                    <span>Complexity Barrier: Natural conversation</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-purple-200">
+              <CardHeader className="bg-purple-50">
+                <CardTitle className="flex items-center gap-2 text-purple-800">
+                  <Eye className="w-5 h-5" />
+                  Vision (3-Year)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                <p className="text-lg font-medium text-gray-900 italic">
+                  "VAANI becomes the primary interface for 10 million Indian MSMEs to operate their businesses."
+                </p>
+                <div className="mt-4 space-y-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-purple-600" />
+                    <span>Voice-First Business OS</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-purple-600" />
+                    <span>12+ Languages (speaking & listening)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-purple-600" />
+                    <span>Proactive Intelligence & Insights</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-purple-600" />
+                    <span>Offline Capabilities</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Market Context */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-green-600" />
+                Market Opportunity
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center p-4 bg-green-50 rounded-xl border border-green-200">
+                  <p className="text-3xl font-bold text-green-700">63M</p>
+                  <p className="text-sm text-green-600 font-medium">Total MSMEs in India</p>
+                  <p className="text-xs text-gray-500 mt-1">TAM - Total Addressable Market</p>
+                </div>
+                <div className="text-center p-4 bg-blue-50 rounded-xl border border-blue-200">
+                  <p className="text-3xl font-bold text-blue-700">15M</p>
+                  <p className="text-sm text-blue-600 font-medium">Digitally Active MSMEs</p>
+                  <p className="text-xs text-gray-500 mt-1">SAM - Serviceable Market</p>
+                </div>
+                <div className="text-center p-4 bg-purple-50 rounded-xl border border-purple-200">
+                  <p className="text-3xl font-bold text-purple-700">3M</p>
+                  <p className="text-sm text-purple-600 font-medium">Target in 18 Months</p>
+                  <p className="text-xs text-gray-500 mt-1">SOM - Obtainable Market</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Strategic Pillars */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-yellow-600" />
+                Strategic Pillars
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <h4 className="font-semibold text-blue-900 mb-2">Accessibility First</h4>
+                  <ul className="text-sm text-blue-700 space-y-1">
+                    <li>• Voice as primary input</li>
+                    <li>• All major Indian languages</li>
+                    <li>• Works in noisy environments</li>
+                    <li>• Minimal data usage</li>
+                  </ul>
+                </div>
+                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                  <h4 className="font-semibold text-green-900 mb-2">Speed & Efficiency</h4>
+                  <ul className="text-sm text-green-700 space-y-1">
+                    <li>• 3x faster than typing</li>
+                    <li>• Intelligent defaults</li>
+                    <li>• Batch operations</li>
+                    <li>• Voice shortcuts</li>
+                  </ul>
+                </div>
+                <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                  <h4 className="font-semibold text-purple-900 mb-2">Accuracy & Trust</h4>
+                  <ul className="text-sm text-purple-700 space-y-1">
+                    <li>• 95% accuracy target</li>
+                    <li>• User reviews before save</li>
+                    <li>• Transparent AI decisions</li>
+                    <li>• Easy error correction</li>
+                  </ul>
+                </div>
+                <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                  <h4 className="font-semibold text-red-900 mb-2">Privacy & Security</h4>
+                  <ul className="text-sm text-red-700 space-y-1">
+                    <li>• Secure voice processing</li>
+                    <li>• Optional local processing</li>
+                    <li>• Clear user controls</li>
+                    <li>• Regulatory compliance</li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Technology Stack */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Server className="w-5 h-5 text-blue-600" />
+                Technology Foundation
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3">AI Architecture (5 Agents)</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                      <Badge>1</Badge>
+                      <span className="text-sm">Intent Detector - Routes to transaction type</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                      <Badge>2</Badge>
+                      <span className="text-sm">Transaction Extractor - Extracts structured data</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                      <Badge>3</Badge>
+                      <span className="text-sm">Question Generator - Asks clarifying questions</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                      <Badge>4</Badge>
+                      <span className="text-sm">Category Matcher - 3-tier categorization</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                      <Badge>5</Badge>
+                      <span className="text-sm">Response Builder - Structures output</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3">Model Strategy</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <span className="text-sm font-medium">Intent Detection</span>
+                      <Badge variant="secondary">Gemini 2.0 Flash</Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <span className="text-sm font-medium">Simple Extraction</span>
+                      <Badge variant="secondary">Gemini 2.0 Flash</Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <span className="text-sm font-medium">Complex Extraction</span>
+                      <Badge variant="secondary">Gemini 1.5 Pro</Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <span className="text-sm font-medium">Category Matching</span>
+                      <Badge variant="secondary">Gemini 1.5 Flash</Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <span className="text-sm font-medium">Find Mode Queries</span>
+                      <Badge variant="secondary">Gemini 1.5 Pro</Badge>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Success Metrics */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-green-600" />
+                Success Metrics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="p-4 bg-blue-50 rounded-lg text-center">
+                  <p className="text-2xl font-bold text-blue-700">30%</p>
+                  <p className="text-xs text-blue-600">Voice Adoption (Y1)</p>
+                </div>
+                <div className="p-4 bg-green-50 rounded-lg text-center">
+                  <p className="text-2xl font-bold text-green-700">95%</p>
+                  <p className="text-xs text-green-600">Transaction Accuracy</p>
+                </div>
+                <div className="p-4 bg-purple-50 rounded-lg text-center">
+                  <p className="text-2xl font-bold text-purple-700">&lt;10s</p>
+                  <p className="text-xs text-purple-600">Time to Transaction</p>
+                </div>
+                <div className="p-4 bg-yellow-50 rounded-lg text-center">
+                  <p className="text-2xl font-bold text-yellow-700">60%</p>
+                  <p className="text-xs text-yellow-600">30-Day Retention</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Competitive Advantage */}
+          <Card className="border-2 border-green-200">
+            <CardHeader className="bg-green-50">
+              <CardTitle className="flex items-center gap-2 text-green-800">
+                <Sparkles className="w-5 h-5" />
+                VAANI's Unique Position
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
+              <p className="text-gray-700 mb-4 font-medium">
+                The only voice-first business software designed specifically for Indian MSMEs
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div className="flex items-center gap-2 p-2 bg-green-50 rounded">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-sm">Voice Transaction Entry</span>
+                </div>
+                <div className="flex items-center gap-2 p-2 bg-green-50 rounded">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-sm">10 Indian Languages</span>
+                </div>
+                <div className="flex items-center gap-2 p-2 bg-green-50 rounded">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-sm">Hinglish Support</span>
+                </div>
+                <div className="flex items-center gap-2 p-2 bg-green-50 rounded">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-sm">Hands-Free Operation</span>
+                </div>
+                <div className="flex items-center gap-2 p-2 bg-green-50 rounded">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-sm">Context-Aware AI</span>
+                </div>
+                <div className="flex items-center gap-2 p-2 bg-green-50 rounded">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-sm">1.3M Transaction Data</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         {/* System Prompts Tab */}
         <TabsContent value="prompts" className="space-y-6">

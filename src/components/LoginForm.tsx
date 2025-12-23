@@ -181,9 +181,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
             <LogIn className="w-8 h-8 text-white" />
           </div>
           <CardTitle className="text-2xl font-bold text-gray-800">
-            Vyapar LLM Dashboard
+            Vaani LLM Arena
           </CardTitle>
-          <p className="text-gray-600">Internal Model Comparison Tool</p>
+          <p className="text-gray-600">Voice-First Business Intelligence</p>
         </CardHeader>
 
         {/* Login Form */}

@@ -53,6 +53,7 @@ interface NavItem {
  * Each item represents a section of the dashboard.
  */
 const NAV_ITEMS: NavItem[] = [
+  { id: 'how-vaani-works', label: 'How Vaani Works', icon: '📖' },
   { id: 'playground-prompts', label: 'Playground', icon: '🔍' },
   { id: 'speech-to-text', label: 'Speech to Text', icon: '🎤' },
   { id: 'prod-insights', label: 'Prod Insights', icon: '📈' },
@@ -151,7 +152,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout, currentPage, onPageChange }) 
                 onClick={handleLogoClick}
                 className="text-xl font-bold text-blue-600 hover:text-blue-700 transition-colors cursor-pointer"
               >
-                Vyapar LLM Hub
+                Vaani LLM Arena
               </button>
             </div>
           </div>

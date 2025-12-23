@@ -16,6 +16,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 // Components
 import LoginForm from '@/components/LoginForm';
 import Navbar from '@/components/Navbar';
+import HowVaaniWorks from '@/components/HowVaaniWorks';
 import PlaygroundPrompts from '@/components/PlayGroundPrompts';
 import AudioTranscription from '@/components/Speech2Text';
 import ProductionInsights from '@/components/ProductionInsights';
@@ -36,10 +37,10 @@ const STORAGE_KEYS = {
 } as const;
 
 /** Available pages/routes in the application */
-type PageId = 'playground-prompts' | 'speech-to-text' | 'prod-insights' | 'data-science' | 'product';
+type PageId = 'how-vaani-works' | 'playground-prompts' | 'speech-to-text' | 'prod-insights' | 'data-science' | 'product';
 
 /** Default page to show after login */
-const DEFAULT_PAGE: PageId = 'playground-prompts';
+const DEFAULT_PAGE: PageId = 'how-vaani-works';
 
 // =============================================================================
 // HELPER FUNCTIONS
@@ -172,6 +173,8 @@ const Index: React.FC = () => {
    */
   const renderCurrentPage = (): React.ReactNode => {
     switch (currentPage) {
+      case 'how-vaani-works':
+        return <HowVaaniWorks />;
       case 'playground-prompts':
         return <PlaygroundPrompts />;
       case 'speech-to-text':
@@ -184,7 +187,7 @@ const Index: React.FC = () => {
         return <Product />;
       default:
         // Fallback to default page for unknown routes
-        return <PlaygroundPrompts />;
+        return <HowVaaniWorks />;
     }
   };
 
