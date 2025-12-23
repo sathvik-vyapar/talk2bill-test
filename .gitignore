@@ -31,3 +31,5 @@ ideas-vaani.md
 
 # Claude settings
 .claude/
+
+.env
