@@ -23,7 +23,8 @@ import {
 import {
   TrendingUp, Database, Users, MessageSquare, CheckCircle, XCircle,
   Clock, Mic, IndianRupee, ShoppingCart, FileText, Calendar, AlertTriangle,
-  ArrowDown, Filter, Lightbulb, Target, TrendingDown, AlertCircle, Info
+  ArrowDown, Filter, Lightbulb, Target, TrendingDown, AlertCircle, Info,
+  Copy, Check, Code, ChevronDown, ChevronUp
 } from 'lucide-react';
 
 // Production Data Summary (Nov 7 - Dec 22, 2025)
@@ -257,12 +258,278 @@ const sampleTranscriptions = [
   { text: "Electricity bill 2500.", intent: "expense", category: "utilities" },
 ];
 
+// Raw transaction data for in-depth analysis
+const rawTransactionData = [
+  {
+    id: "txn_001",
+    session_id: "sess_abc123",
+    timestamp: "2024-12-18T10:23:45.123Z",
+    transcription: "Petrol 500 rupees",
+    intent_detected: "expense",
+    status: "INVOICE_READY",
+    processing_time_ms: 1847,
+    extracted_data: {
+      items: [{ name: "Petrol", amount: 500, quantity: 1 }],
+      total_amount: 500,
+      category: "Fuel",
+      category_confidence: 0.95,
+      payment_mode: "cash",
+      date: "2024-12-18"
+    },
+    model_used: "gemini-2.0-flash",
+    word_count: 3,
+    audio_duration_ms: 2100,
+    language_detected: "hinglish"
+  },
+  {
+    id: "txn_002",
+    session_id: "sess_def456",
+    timestamp: "2024-12-18T11:05:12.456Z",
+    transcription: "Chai samosa 140 rupees aur parking 50 rupees",
+    intent_detected: "expense",
+    status: "INVOICE_READY",
+    processing_time_ms: 2341,
+    extracted_data: {
+      items: [
+        { name: "Chai", amount: 70, quantity: 1 },
+        { name: "Samosa", amount: 70, quantity: 1 },
+        { name: "Parking", amount: 50, quantity: 1 }
+      ],
+      total_amount: 190,
+      category: "Food",
+      category_confidence: 0.88,
+      payment_mode: "cash",
+      date: "2024-12-18"
+    },
+    model_used: "gemini-1.5-pro",
+    word_count: 7,
+    audio_duration_ms: 3500,
+    language_detected: "hindi"
+  },
+  {
+    id: "txn_003",
+    session_id: "sess_ghi789",
+    timestamp: "2024-12-17T14:30:00.789Z",
+    transcription: "Salary for driver Ramesh 15000",
+    intent_detected: "expense",
+    status: "INVOICE_READY",
+    processing_time_ms: 1523,
+    extracted_data: {
+      items: [{ name: "Salary - Driver Ramesh", amount: 15000, quantity: 1 }],
+      total_amount: 15000,
+      category: "Salary",
+      category_confidence: 0.92,
+      payment_mode: "cash",
+      party_name: "Ramesh",
+      date: "2024-12-17"
+    },
+    model_used: "gemini-2.0-flash",
+    word_count: 5,
+    audio_duration_ms: 2800,
+    language_detected: "english"
+  },
+  {
+    id: "txn_004",
+    session_id: "sess_jkl012",
+    timestamp: "2024-12-17T09:15:30.012Z",
+    transcription: "yes",
+    intent_detected: "other",
+    status: "T2I_COMPLETED",
+    processing_time_ms: 892,
+    extracted_data: {
+      items: [],
+      total_amount: 0,
+      category: null,
+      category_confidence: 0,
+      error: "No expense information detected"
+    },
+    model_used: "gemini-2.0-flash",
+    word_count: 1,
+    audio_duration_ms: 800,
+    language_detected: "english"
+  },
+  {
+    id: "txn_005",
+    session_id: "sess_mno345",
+    timestamp: "2024-12-16T16:45:22.345Z",
+    transcription: "Electricity bill 2500 rupees for November",
+    intent_detected: "expense",
+    status: "INVOICE_READY",
+    processing_time_ms: 1756,
+    extracted_data: {
+      items: [{ name: "Electricity Bill", amount: 2500, quantity: 1 }],
+      total_amount: 2500,
+      category: "Utilities",
+      category_confidence: 0.97,
+      payment_mode: "bank",
+      date: "2024-12-16",
+      notes: "November bill"
+    },
+    model_used: "gemini-2.0-flash",
+    word_count: 6,
+    audio_duration_ms: 3200,
+    language_detected: "english"
+  },
+  {
+    id: "txn_006",
+    session_id: "sess_pqr678",
+    timestamp: "2024-12-16T12:00:00.678Z",
+    transcription: "hello vaani",
+    intent_detected: "other",
+    status: "T2I_COMPLETED",
+    processing_time_ms: 723,
+    extracted_data: {
+      items: [],
+      total_amount: 0,
+      category: null,
+      category_confidence: 0,
+      error: "Greeting detected, no expense"
+    },
+    model_used: "gemini-2.0-flash",
+    word_count: 2,
+    audio_duration_ms: 1200,
+    language_detected: "english"
+  },
+  {
+    id: "txn_007",
+    session_id: "sess_stu901",
+    timestamp: "2024-12-15T18:30:45.901Z",
+    transcription: "Diesel 800 rupees for truck",
+    intent_detected: "expense",
+    status: "INVOICE_READY",
+    processing_time_ms: 1634,
+    extracted_data: {
+      items: [{ name: "Diesel", amount: 800, quantity: 1 }],
+      total_amount: 800,
+      category: "Fuel",
+      category_confidence: 0.94,
+      payment_mode: "cash",
+      date: "2024-12-15",
+      notes: "For truck"
+    },
+    model_used: "gemini-2.0-flash",
+    word_count: 5,
+    audio_duration_ms: 2400,
+    language_detected: "english"
+  },
+  {
+    id: "txn_008",
+    session_id: "sess_vwx234",
+    timestamp: "2024-12-15T10:20:15.234Z",
+    transcription: "Rent payment 25000 for shop",
+    intent_detected: "expense",
+    status: "INVOICE_READY",
+    processing_time_ms: 1892,
+    extracted_data: {
+      items: [{ name: "Shop Rent", amount: 25000, quantity: 1 }],
+      total_amount: 25000,
+      category: "Rent",
+      category_confidence: 0.96,
+      payment_mode: "bank",
+      date: "2024-12-15"
+    },
+    model_used: "gemini-2.0-flash",
+    word_count: 5,
+    audio_duration_ms: 2600,
+    language_detected: "english"
+  },
+  {
+    id: "txn_009",
+    session_id: "sess_yz0567",
+    timestamp: "2024-12-14T15:45:30.567Z",
+    transcription: "",
+    intent_detected: "unknown",
+    status: "FAILED",
+    processing_time_ms: 312,
+    extracted_data: {
+      items: [],
+      total_amount: 0,
+      category: null,
+      error: "Empty audio / no transcription"
+    },
+    model_used: null,
+    word_count: 0,
+    audio_duration_ms: 500,
+    language_detected: null
+  },
+  {
+    id: "txn_010",
+    session_id: "sess_abc890",
+    timestamp: "2024-12-14T11:10:00.890Z",
+    transcription: "Tea 20 rupees milk 45 rupees bread 30 rupees",
+    intent_detected: "expense",
+    status: "INVOICE_READY",
+    processing_time_ms: 2156,
+    extracted_data: {
+      items: [
+        { name: "Tea", amount: 20, quantity: 1 },
+        { name: "Milk", amount: 45, quantity: 1 },
+        { name: "Bread", amount: 30, quantity: 1 }
+      ],
+      total_amount: 95,
+      category: "Food",
+      category_confidence: 0.91,
+      payment_mode: "cash",
+      date: "2024-12-14"
+    },
+    model_used: "gemini-1.5-pro",
+    word_count: 9,
+    audio_duration_ms: 4200,
+    language_detected: "english"
+  },
+  {
+    id: "txn_011",
+    session_id: "sess_def123",
+    timestamp: "2024-11-20T09:30:00.123Z",
+    transcription: "Auto rickshaw 150 rupees",
+    intent_detected: "expense",
+    status: "INVOICE_READY",
+    processing_time_ms: 1423,
+    extracted_data: {
+      items: [{ name: "Auto Rickshaw", amount: 150, quantity: 1 }],
+      total_amount: 150,
+      category: "Transport",
+      category_confidence: 0.93,
+      payment_mode: "cash",
+      date: "2024-11-20"
+    },
+    model_used: "gemini-2.0-flash",
+    word_count: 4,
+    audio_duration_ms: 1900,
+    language_detected: "english"
+  },
+  {
+    id: "txn_012",
+    session_id: "sess_ghi456",
+    timestamp: "2024-11-15T14:00:00.456Z",
+    transcription: "Medicine for cold 350 rupees",
+    intent_detected: "expense",
+    status: "INVOICE_READY",
+    processing_time_ms: 1567,
+    extracted_data: {
+      items: [{ name: "Medicine", amount: 350, quantity: 1 }],
+      total_amount: 350,
+      category: "Medical",
+      category_confidence: 0.89,
+      payment_mode: "cash",
+      date: "2024-11-15",
+      notes: "For cold"
+    },
+    model_used: "gemini-2.0-flash",
+    word_count: 5,
+    audio_duration_ms: 2300,
+    language_detected: "english"
+  }
+];
+
 const ProductionInsights = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [dateFilter, setDateFilter] = useState('all');
   const [intentFilter, setIntentFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Filter options
   const dateOptions = [
@@ -579,13 +846,14 @@ const ProductionInsights = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="funnel">Funnel</TabsTrigger>
           <TabsTrigger value="other-intent">Other Intent</TabsTrigger>
           <TabsTrigger value="categories">Categories</TabsTrigger>
           <TabsTrigger value="items">Top Items</TabsTrigger>
           <TabsTrigger value="samples">Samples</TabsTrigger>
+          <TabsTrigger value="raw-data">Raw Data</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -1274,6 +1542,331 @@ const ProductionInsights = () => {
                   <span><strong>Cash is king</strong> - 98.1% transactions recorded as cash payments</span>
                 </li>
               </ul>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Raw Data Tab */}
+        <TabsContent value="raw-data" className="space-y-6">
+          {/* Info Banner */}
+          <Card className="bg-blue-50 border-blue-200">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <Code className="w-5 h-5 text-blue-600 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-blue-900">Raw Transaction Data</h3>
+                  <p className="text-sm text-blue-700">
+                    View extracted JSON data for each transaction including items, amounts, processing time, and model details.
+                    Use the filters above to narrow down results. Click on a row to expand full JSON.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Filter Summary */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Filter className="w-5 h-5 text-gray-500" />
+                Active Filters
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {dateFilter !== 'all' && (
+                  <Badge variant="secondary">Date: {dateOptions.find(o => o.value === dateFilter)?.label}</Badge>
+                )}
+                {intentFilter !== 'all' && (
+                  <Badge variant="secondary">Intent: {intentFilter}</Badge>
+                )}
+                {statusFilter !== 'all' && (
+                  <Badge variant="secondary">Status: {statusFilter}</Badge>
+                )}
+                {categoryFilter !== 'all' && (
+                  <Badge variant="secondary">Category: {categoryFilter}</Badge>
+                )}
+                {!hasActiveFilters && (
+                  <Badge variant="outline" className="text-gray-500">No filters applied - Showing all data</Badge>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Summary Stats for Filtered Data */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card>
+              <CardContent className="p-4 text-center">
+                <p className="text-2xl font-bold text-blue-600">
+                  {rawTransactionData.filter(txn => {
+                    if (intentFilter !== 'all' && txn.intent_detected !== intentFilter) return false;
+                    if (statusFilter !== 'all') {
+                      const statusMap: Record<string, string> = { completed: 'T2I_COMPLETED', invoice: 'INVOICE_READY', failed: 'FAILED' };
+                      if (txn.status !== statusMap[statusFilter]) return false;
+                    }
+                    if (categoryFilter !== 'all' && txn.extracted_data.category?.toLowerCase() !== categoryFilter) return false;
+                    return true;
+                  }).length}
+                </p>
+                <p className="text-xs text-gray-500">Matching Records</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <p className="text-2xl font-bold text-green-600">
+                  {Math.round(
+                    rawTransactionData.filter(txn => {
+                      if (intentFilter !== 'all' && txn.intent_detected !== intentFilter) return false;
+                      if (statusFilter !== 'all') {
+                        const statusMap: Record<string, string> = { completed: 'T2I_COMPLETED', invoice: 'INVOICE_READY', failed: 'FAILED' };
+                        if (txn.status !== statusMap[statusFilter]) return false;
+                      }
+                      if (categoryFilter !== 'all' && txn.extracted_data.category?.toLowerCase() !== categoryFilter) return false;
+                      return true;
+                    }).reduce((sum, txn) => sum + txn.processing_time_ms, 0) /
+                    Math.max(1, rawTransactionData.filter(txn => {
+                      if (intentFilter !== 'all' && txn.intent_detected !== intentFilter) return false;
+                      if (statusFilter !== 'all') {
+                        const statusMap: Record<string, string> = { completed: 'T2I_COMPLETED', invoice: 'INVOICE_READY', failed: 'FAILED' };
+                        if (txn.status !== statusMap[statusFilter]) return false;
+                      }
+                      if (categoryFilter !== 'all' && txn.extracted_data.category?.toLowerCase() !== categoryFilter) return false;
+                      return true;
+                    }).length)
+                  )}ms
+                </p>
+                <p className="text-xs text-gray-500">Avg Processing Time</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <p className="text-2xl font-bold text-purple-600">
+                  ₹{rawTransactionData.filter(txn => {
+                    if (intentFilter !== 'all' && txn.intent_detected !== intentFilter) return false;
+                    if (statusFilter !== 'all') {
+                      const statusMap: Record<string, string> = { completed: 'T2I_COMPLETED', invoice: 'INVOICE_READY', failed: 'FAILED' };
+                      if (txn.status !== statusMap[statusFilter]) return false;
+                    }
+                    if (categoryFilter !== 'all' && txn.extracted_data.category?.toLowerCase() !== categoryFilter) return false;
+                    return true;
+                  }).reduce((sum, txn) => sum + txn.extracted_data.total_amount, 0).toLocaleString()}
+                </p>
+                <p className="text-xs text-gray-500">Total Amount</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <p className="text-2xl font-bold text-yellow-600">
+                  {rawTransactionData.filter(txn => {
+                    if (intentFilter !== 'all' && txn.intent_detected !== intentFilter) return false;
+                    if (statusFilter !== 'all') {
+                      const statusMap: Record<string, string> = { completed: 'T2I_COMPLETED', invoice: 'INVOICE_READY', failed: 'FAILED' };
+                      if (txn.status !== statusMap[statusFilter]) return false;
+                    }
+                    if (categoryFilter !== 'all' && txn.extracted_data.category?.toLowerCase() !== categoryFilter) return false;
+                    return true;
+                  }).reduce((sum, txn) => sum + txn.extracted_data.items.length, 0)}
+                </p>
+                <p className="text-xs text-gray-500">Total Items Extracted</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Transaction List */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Database className="w-5 h-5 text-blue-500" />
+                Transaction JSON Data
+              </CardTitle>
+              <p className="text-sm text-gray-500">
+                Click on any row to expand and view the complete JSON. Use the copy button to copy individual records.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {rawTransactionData
+                  .filter(txn => {
+                    if (intentFilter !== 'all' && txn.intent_detected !== intentFilter) return false;
+                    if (statusFilter !== 'all') {
+                      const statusMap: Record<string, string> = { completed: 'T2I_COMPLETED', invoice: 'INVOICE_READY', failed: 'FAILED' };
+                      if (txn.status !== statusMap[statusFilter]) return false;
+                    }
+                    if (categoryFilter !== 'all' && txn.extracted_data.category?.toLowerCase() !== categoryFilter) return false;
+                    return true;
+                  })
+                  .map((txn) => {
+                    const isExpanded = expandedRows.has(txn.id);
+                    return (
+                      <div
+                        key={txn.id}
+                        className={`border rounded-lg overflow-hidden ${
+                          txn.status === 'INVOICE_READY' ? 'border-green-200' :
+                          txn.status === 'FAILED' ? 'border-red-200' : 'border-gray-200'
+                        }`}
+                      >
+                        {/* Row Header */}
+                        <div
+                          className={`flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 ${
+                            txn.status === 'INVOICE_READY' ? 'bg-green-50' :
+                            txn.status === 'FAILED' ? 'bg-red-50' : 'bg-gray-50'
+                          }`}
+                          onClick={() => {
+                            const newSet = new Set(expandedRows);
+                            if (isExpanded) {
+                              newSet.delete(txn.id);
+                            } else {
+                              newSet.add(txn.id);
+                            }
+                            setExpandedRows(newSet);
+                          }}
+                        >
+                          <div className="flex items-center gap-4">
+                            {isExpanded ? (
+                              <ChevronUp className="w-4 h-4 text-gray-500" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4 text-gray-500" />
+                            )}
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <code className="text-xs text-gray-500">{txn.id}</code>
+                                <Badge variant={
+                                  txn.status === 'INVOICE_READY' ? 'default' :
+                                  txn.status === 'FAILED' ? 'destructive' : 'secondary'
+                                } className="text-xs">
+                                  {txn.status}
+                                </Badge>
+                                <Badge variant="outline" className="text-xs">
+                                  {txn.intent_detected}
+                                </Badge>
+                              </div>
+                              <p className="text-sm font-medium text-gray-900 mt-1">
+                                "{txn.transcription || '(empty)'}"
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="text-right text-sm">
+                              <div className="flex items-center gap-2 text-gray-500">
+                                <Clock className="w-3 h-3" />
+                                <span>{txn.processing_time_ms}ms</span>
+                              </div>
+                              {txn.extracted_data.total_amount > 0 && (
+                                <div className="text-green-600 font-medium">
+                                  ₹{txn.extracted_data.total_amount.toLocaleString()}
+                                </div>
+                              )}
+                            </div>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigator.clipboard.writeText(JSON.stringify(txn, null, 2));
+                                setCopiedId(txn.id);
+                                setTimeout(() => setCopiedId(null), 2000);
+                              }}
+                              className="p-2 rounded hover:bg-gray-200 transition-colors"
+                            >
+                              {copiedId === txn.id ? (
+                                <Check className="w-4 h-4 text-green-600" />
+                              ) : (
+                                <Copy className="w-4 h-4 text-gray-400" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Expanded JSON View */}
+                        {isExpanded && (
+                          <div className="border-t bg-gray-900 p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-xs text-gray-400">Full JSON Data</span>
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(JSON.stringify(txn, null, 2));
+                                  setCopiedId(txn.id + '-full');
+                                  setTimeout(() => setCopiedId(null), 2000);
+                                }}
+                                className="flex items-center gap-1 text-xs text-gray-400 hover:text-white transition-colors"
+                              >
+                                {copiedId === txn.id + '-full' ? (
+                                  <>
+                                    <Check className="w-3 h-3" />
+                                    Copied!
+                                  </>
+                                ) : (
+                                  <>
+                                    <Copy className="w-3 h-3" />
+                                    Copy JSON
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                            <pre className="text-xs text-green-400 overflow-x-auto">
+                              {JSON.stringify(txn, null, 2)}
+                            </pre>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                {rawTransactionData.filter(txn => {
+                  if (intentFilter !== 'all' && txn.intent_detected !== intentFilter) return false;
+                  if (statusFilter !== 'all') {
+                    const statusMap: Record<string, string> = { completed: 'T2I_COMPLETED', invoice: 'INVOICE_READY', failed: 'FAILED' };
+                    if (txn.status !== statusMap[statusFilter]) return false;
+                  }
+                  if (categoryFilter !== 'all' && txn.extracted_data.category?.toLowerCase() !== categoryFilter) return false;
+                  return true;
+                }).length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    <Database className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                    <p>No transactions match the current filters</p>
+                    <Button variant="link" onClick={resetFilters}>Reset Filters</Button>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Copy All Filtered Data */}
+          <Card className="bg-gradient-to-r from-gray-50 to-blue-50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-gray-900">Export Filtered Data</h3>
+                  <p className="text-sm text-gray-600">Copy all filtered transactions as JSON for external analysis</p>
+                </div>
+                <Button
+                  onClick={() => {
+                    const filteredData = rawTransactionData.filter(txn => {
+                      if (intentFilter !== 'all' && txn.intent_detected !== intentFilter) return false;
+                      if (statusFilter !== 'all') {
+                        const statusMap: Record<string, string> = { completed: 'T2I_COMPLETED', invoice: 'INVOICE_READY', failed: 'FAILED' };
+                        if (txn.status !== statusMap[statusFilter]) return false;
+                      }
+                      if (categoryFilter !== 'all' && txn.extracted_data.category?.toLowerCase() !== categoryFilter) return false;
+                      return true;
+                    });
+                    navigator.clipboard.writeText(JSON.stringify(filteredData, null, 2));
+                    setCopiedId('all');
+                    setTimeout(() => setCopiedId(null), 2000);
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  {copiedId === 'all' ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      Copy All as JSON
+                    </>
+                  )}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
