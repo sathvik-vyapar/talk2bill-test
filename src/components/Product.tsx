@@ -3878,7 +3878,7 @@ const Product = () => {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">LLM Arena Roadmap</h2>
-                  <p className="text-gray-600 mt-1">Feature ideas and implementation phases for VAANI testing platform</p>
+                  <p className="text-gray-600 mt-1">Feature ideas and implementation phases for the LLM testing and comparison platform</p>
                   <div className="flex gap-2 mt-3">
                     <Badge className="bg-purple-100 text-purple-800">8 Categories</Badge>
                     <Badge className="bg-blue-100 text-blue-800">50+ Features</Badge>
@@ -4005,7 +4005,7 @@ const Product = () => {
                 <div className="space-y-2">
                   <h4 className="font-medium text-gray-900 flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-500" />
-                    VAANI Metrics Dashboard
+                    LLM Performance Metrics
                   </h4>
                   <ul className="text-sm text-gray-600 space-y-1 ml-6">
                     <li>Success Rate Tracking (daily, 7-day avg)</li>
@@ -4018,13 +4018,13 @@ const Product = () => {
                 <div className="space-y-2">
                   <h4 className="font-medium text-gray-900 flex items-center gap-2">
                     <MessageCircle className="w-4 h-4 text-blue-500" />
-                    User Behavior Insights
+                    Prompt Analysis
                   </h4>
                   <ul className="text-sm text-gray-600 space-y-1 ml-6">
-                    <li>First Message Analysis (quality scores)</li>
-                    <li>Word Count Distribution</li>
-                    <li>Drop-off Analysis (at which turn)</li>
-                    <li>"Yes/Okay" Problem Dashboard</li>
+                    <li>Token usage analysis</li>
+                    <li>Prompt effectiveness scores</li>
+                    <li>Input complexity metrics</li>
+                    <li>Output quality ratings</li>
                   </ul>
                 </div>
                 <div className="space-y-2">
@@ -4106,46 +4106,46 @@ const Product = () => {
                     Learning Center
                   </h4>
                   <ul className="text-sm text-gray-600 space-y-1 ml-6">
-                    <li>Common Failure Patterns (The "Yes" Problem)</li>
-                    <li>Best Practices for prompts</li>
-                    <li>Architecture Diagrams</li>
-                    <li>Onboarding Guide</li>
+                    <li>Prompt engineering best practices</li>
+                    <li>Model selection guide</li>
+                    <li>Common failure patterns</li>
+                    <li>Platform onboarding guide</li>
                   </ul>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Category & Data Management */}
+            {/* Model Management */}
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Filter className="w-5 h-5 text-orange-500" />
-                  5. Category & Data Management
+                  5. Model Management
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <h4 className="font-medium text-gray-900 flex items-center gap-2">
                     <Search className="w-4 h-4 text-blue-500" />
-                    Category Explorer
+                    Model Registry
                   </h4>
                   <ul className="text-sm text-gray-600 space-y-1 ml-6">
-                    <li>50 Categories Tree View</li>
-                    <li>5-10 Examples per category</li>
-                    <li>Transaction count & trends</li>
-                    <li>Category Testing Tool</li>
+                    <li>All available models listing</li>
+                    <li>Model capabilities & pricing</li>
+                    <li>Performance benchmarks</li>
+                    <li>Quick model switching</li>
                   </ul>
                 </div>
                 <div className="space-y-2">
                   <h4 className="font-medium text-gray-900 flex items-center gap-2">
                     <FileSpreadsheet className="w-4 h-4 text-green-500" />
-                    Excel Database Viewer
+                    Test Dataset Library
                   </h4>
                   <ul className="text-sm text-gray-600 space-y-1 ml-6">
-                    <li>Item Search with fuzzy matching</li>
-                    <li>Category Assignments editor</li>
-                    <li>Data Quality reports</li>
-                    <li>Bulk import/export</li>
+                    <li>Curated test cases by difficulty</li>
+                    <li>Edge case collections</li>
+                    <li>Multi-language test sets</li>
+                    <li>Custom dataset upload</li>
                   </ul>
                 </div>
               </CardContent>
@@ -4247,13 +4247,13 @@ const Product = () => {
                 <div className="space-y-2">
                   <h4 className="font-medium text-gray-900 flex items-center gap-2">
                     <Zap className="w-4 h-4 text-blue-500" />
-                    Voice AI News Feed
+                    LLM News Feed
                   </h4>
                   <ul className="text-sm text-gray-600 space-y-1 ml-6">
-                    <li>Latest Model Announcements</li>
-                    <li>Industry Benchmarks</li>
-                    <li>Competitor Analysis</li>
-                    <li>Research Papers</li>
+                    <li>Latest model announcements</li>
+                    <li>Industry benchmarks</li>
+                    <li>Provider updates</li>
+                    <li>Research papers</li>
                   </ul>
                 </div>
                 <div className="space-y-2">
@@ -4292,12 +4292,12 @@ const Product = () => {
                   </ul>
                 </div>
                 <div className="bg-white p-3 rounded-lg border border-green-200">
-                  <h4 className="font-medium text-green-900 mb-2">Export</h4>
+                  <h4 className="font-medium text-green-900 mb-2">Results</h4>
                   <ul className="text-xs text-green-700 space-y-1">
-                    <li>CSV export</li>
-                    <li>PDF reports</li>
-                    <li>Copy to clipboard</li>
-                    <li>Download datasets</li>
+                    <li>Copy JSON output</li>
+                    <li>Share test results</li>
+                    <li>Export comparisons</li>
+                    <li>Save test sessions</li>
                   </ul>
                 </div>
                 <div className="bg-white p-3 rounded-lg border border-green-200">
