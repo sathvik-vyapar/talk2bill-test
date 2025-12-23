@@ -50,15 +50,19 @@ interface NavItem {
 
 /**
  * Navigation items configuration.
- * Each item represents a section of the dashboard.
+ * Organized by user journey: Learn → Test → Analyze → Reference
  */
 const NAV_ITEMS: NavItem[] = [
-  { id: 'how-vaani-works', label: 'How Vaani Works', icon: '📖' },
-  { id: 'playground-prompts', label: 'Playground', icon: '🔍' },
+  // Learn
+  { id: 'how-vaani-works', label: 'How It Works', icon: '📖' },
+  // Test (in order of the pipeline)
   { id: 'speech-to-text', label: 'Speech to Text', icon: '🎤' },
-  { id: 'talk2bill', label: 'Talk to Bill', icon: '💬' },
+  { id: 'playground-prompts', label: 'Playground', icon: '🔍' },
+  { id: 'talk2bill', label: 'Talk2Bill', icon: '💬' },
+  // Analyze
   { id: 'prod-insights', label: 'Prod Insights', icon: '📈' },
-  { id: 'data-science', label: 'Data Science', icon: '🧠' },
+  // Reference
+  { id: 'data-science', label: 'Architecture', icon: '🧠' },
   { id: 'product', label: 'Product', icon: '🛠️' },
 ];
 
@@ -151,9 +155,10 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout, currentPage, onPageChange }) 
             <div className="flex-shrink-0">
               <button
                 onClick={handleLogoClick}
-                className="text-xl font-bold text-blue-600 hover:text-blue-700 transition-colors cursor-pointer"
+                className="flex items-baseline gap-1.5 hover:opacity-80 transition-opacity cursor-pointer"
               >
-                Vaani LLM Arena
+                <span className="text-2xl font-bold text-blue-600">VAANI</span>
+                <span className="text-xs font-medium text-gray-500">LLM Arena</span>
               </button>
             </div>
           </div>
