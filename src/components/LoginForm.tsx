@@ -43,8 +43,10 @@ interface Credentials {
 // CONSTANTS
 // =============================================================================
 
+import { API_ENDPOINTS } from '@/lib/api-config';
+
 /** API endpoint for authentication */
-const AUTH_API_ENDPOINT = 'https://analytics-staging.vyaparapp.in/api/ps/talk2bill/talk2bill-login';
+const AUTH_API_ENDPOINT = API_ENDPOINTS.TALK2BILL.LOGIN;
 
 /** localStorage key for auth token */
 const AUTH_TOKEN_KEY = 'authToken';

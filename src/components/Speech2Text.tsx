@@ -96,9 +96,11 @@ type WorkflowStep = 'record' | 'process' | 'review' | 'submit';
 // CONSTANTS
 // =============================================================================
 
-const API_ENDPOINTS = {
-  UPLOAD: 'https://analytics-staging.vyaparapp.in/api/ps/talk2bill/talk2bill-upload',
-  VERIFY: 'https://analytics-staging.vyaparapp.in/api/ps/talk2bill/talk2bill-voice-verify',
+import { API_ENDPOINTS } from '@/lib/api-config';
+
+const API_ENDPOINTS_LOCAL = {
+  UPLOAD: API_ENDPOINTS.TALK2BILL.UPLOAD,
+  VERIFY: API_ENDPOINTS.TALK2BILL.VERIFY,
 } as const;
 
 const INITIAL_TRANSCRIPTION_STATE: TranscriptionState = {
@@ -370,7 +372,7 @@ const AudioTranscription: React.FC = () => {
       const formData = new FormData();
       formData.append('file', audioBlob, audioFileName);
 
-      const response = await fetch(API_ENDPOINTS.UPLOAD, {
+      const response = await fetch(API_ENDPOINTS_LOCAL.UPLOAD, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,

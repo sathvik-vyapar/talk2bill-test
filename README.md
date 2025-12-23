@@ -603,6 +603,43 @@ npm run build
 # Deploy docs/ folder to your hosting provider
 ```
 
+### Fixing CORS Errors in Production
+
+If you're getting CORS (Cross-Origin Resource Sharing) errors after deployment, here are the solutions:
+
+#### Option 1: Configure Backend CORS (Recommended)
+The backend API server needs to allow requests from your deployed frontend domain. Ask your backend team to add CORS headers:
+
+```
+Access-Control-Allow-Origin: https://your-deployed-domain.com
+Access-Control-Allow-Methods: GET, POST, PATCH, OPTIONS
+Access-Control-Allow-Headers: Content-Type, Authorization
+```
+
+#### Option 2: Use Environment Variables
+Set environment variables before building to configure API URLs:
+
+```bash
+# Create .env file in project root
+VITE_API_BASE_URL=https://staging.vyaparapp.in
+VITE_ANALYTICS_API_BASE_URL=https://analytics-staging.vyaparapp.in
+
+# Then build
+npm run build
+```
+
+#### Option 3: Use a Proxy Service
+For GitHub Pages or static hosting, you can use a proxy service:
+- **Cloudflare Workers** - Create a proxy function
+- **Netlify Functions** - Serverless proxy functions
+- **Vercel Edge Functions** - Edge proxy functions
+
+#### How It Works
+- **Development**: Uses Vite proxy (configured in `vite.config.ts`) - no CORS issues
+- **Production**: Makes direct API calls - requires backend CORS configuration or proxy
+
+All API endpoints are centralized in `src/lib/api-config.ts` for easy configuration.
+
 ---
 
 ## Changelog

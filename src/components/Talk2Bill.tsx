@@ -92,24 +92,13 @@ enum TransactionType {
 // CONSTANTS
 // =============================================================================
 
-// Use relative URLs in development (proxy handles it) or full URLs in production
-// In dev, use relative paths that will be proxied; in prod, use full URLs
-const getApiBaseUrl = () => {
-  if (import.meta.env.DEV) {
-    // In development, use relative paths - Vite proxy will handle them
-    return '';
-  }
-  // In production, use full URL
-  return 'https://staging.vyaparapp.in';
-};
+import { API_ENDPOINTS } from '@/lib/api-config';
 
-const API_BASE_URL = getApiBaseUrl();
-
-const API_ENDPOINTS = {
-  SIGNED_URL: `${API_BASE_URL}/api/ns/cloud/file/multiple-signed-urls`,
-  JOB_STATUS: `${API_BASE_URL}/api/ps/talk2bill/jobs`,
-  SESSION_STATUS: `${API_BASE_URL}/api/ps/talk2bill/session`,
-  FEEDBACK: `${API_BASE_URL}/api/ps/talk2bill/session`,
+const API_ENDPOINTS_LOCAL = {
+  SIGNED_URL: API_ENDPOINTS.TALK2BILL.SIGNED_URL,
+  JOB_STATUS: API_ENDPOINTS.TALK2BILL.JOB_STATUS,
+  SESSION_STATUS: API_ENDPOINTS.TALK2BILL.SESSION_STATUS,
+  FEEDBACK: API_ENDPOINTS.TALK2BILL.FEEDBACK,
 } as const;
 
 const POLLING_INTERVAL = 2000; // 2 seconds
@@ -315,7 +304,7 @@ const Talk2Bill: React.FC = () => {
       },
     ];
 
-    const response = await fetch(API_ENDPOINTS.SIGNED_URL, {
+    const response = await fetch(API_ENDPOINTS_LOCAL.SIGNED_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -366,7 +355,7 @@ const Talk2Bill: React.FC = () => {
       throw new Error('Not authenticated');
     }
 
-    const response = await fetch(`${API_ENDPOINTS.JOB_STATUS}?sessionId=${sessionId}`, {
+    const response = await fetch(`${API_ENDPOINTS_LOCAL.JOB_STATUS}?sessionId=${sessionId}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -390,7 +379,7 @@ const Talk2Bill: React.FC = () => {
       throw new Error('Not authenticated');
     }
 
-    const response = await fetch(`${API_ENDPOINTS.SESSION_STATUS}/${sessionId}/${status}`, {
+    const response = await fetch(`${API_ENDPOINTS_LOCAL.SESSION_STATUS}/${sessionId}/${status}`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -415,7 +404,7 @@ const Talk2Bill: React.FC = () => {
       throw new Error('Not authenticated');
     }
 
-    const response = await fetch(`${API_ENDPOINTS.FEEDBACK}/${sessionId}/feedback`, {
+    const response = await fetch(`${API_ENDPOINTS_LOCAL.FEEDBACK}/${sessionId}/feedback`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -443,7 +432,7 @@ const Talk2Bill: React.FC = () => {
 
     setIsLoadingHistory(true);
     try {
-      const response = await fetch(`${API_ENDPOINTS.JOB_STATUS}?sessionId=${sessionId}&fetchHistory=true`, {
+      const response = await fetch(`${API_ENDPOINTS_LOCAL.JOB_STATUS}?sessionId=${sessionId}&fetchHistory=true`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${authToken}`,

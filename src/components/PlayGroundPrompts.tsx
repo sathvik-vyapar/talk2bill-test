@@ -55,8 +55,10 @@ interface ModelConfig {
 // CONSTANTS & CONFIGURATION
 // =============================================================================
 
+import { API_ENDPOINTS } from '@/lib/api-config';
+
 /** API endpoint for extracting JSON from user input */
-const API_ENDPOINT = 'https://analytics-staging.vyaparapp.in/api/ps/talk2bill/extract-json-alt';
+const API_ENDPOINT = API_ENDPOINTS.TALK2BILL.EXTRACT_JSON;
 
 /** Available LLM models for testing */
 const AVAILABLE_MODELS: ModelConfig[] = [

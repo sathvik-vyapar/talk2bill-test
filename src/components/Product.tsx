@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { testCasesData, TestCase } from '@/data/testCasesData';
+import { API_ENDPOINTS, ANALYTICS_API_BASE_URL } from '@/lib/api-config';
 
 // Pipeline Steps for timing analysis
 const PIPELINE_STEPS = [
@@ -1123,7 +1124,7 @@ const Product = () => {
       const requestStartTime = Date.now();
       timings.push({ step: 'api_request', duration: 0, startTime: requestStartTime });
 
-      const response = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill/extract-json-text', {
+      const response = await fetch(`${API_ENDPOINTS.TALK2BILL.EXTRACT_JSON.replace('/extract-json-alt', '/extract-json-text')}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1324,7 +1325,7 @@ const Product = () => {
       const formData = new FormData();
       formData.append('file', audioFile);
 
-      const uploadResponse = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill/talk2bill-upload', {
+      const uploadResponse = await fetch(API_ENDPOINTS.TALK2BILL.UPLOAD, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -1359,7 +1360,7 @@ const Product = () => {
         status: 'processing',
       }));
 
-      const extractResponse = await fetch('https://analytics-staging.vyaparapp.in/api/ps/talk2bill/extract-json-text', {
+      const extractResponse = await fetch(`${API_ENDPOINTS.TALK2BILL.EXTRACT_JSON.replace('/extract-json-alt', '/extract-json-text')}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1478,7 +1479,7 @@ const Product = () => {
     const startTime = Date.now();
 
     try {
-      const baseUrl = 'https://analytics-staging.vyaparapp.in';
+      const baseUrl = ANALYTICS_API_BASE_URL;
       const token = localStorage.getItem('authToken');
 
       let response: Response;
@@ -3418,7 +3419,7 @@ const Product = () => {
                           <div className="flex items-center gap-2 mt-2">
                             <Badge className="bg-blue-100 text-blue-800">{currentAPI.method}</Badge>
                             <code className="text-sm bg-gray-100 px-2 py-1 rounded">
-                              https://analytics-staging.vyaparapp.in{currentAPI.endpoint}
+                              {ANALYTICS_API_BASE_URL}{currentAPI.endpoint}
                             </code>
                           </div>
                         </div>
