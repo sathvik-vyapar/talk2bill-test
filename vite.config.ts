@@ -11,7 +11,22 @@ export default defineConfig(({ mode }) => ({
   },
   server: {
     host: "::",
-    port: 8080
+    port: 8080,
+    proxy: {
+      // Proxy for /api paths (handles base path automatically)
+      '/talk2bill-test/api': {
+        target: 'https://staging.vyaparapp.in',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/talk2bill-test/, ''),
+      },
+      // Also handle direct /api paths (fallback)
+      '/api': {
+        target: 'https://staging.vyaparapp.in',
+        changeOrigin: true,
+        secure: true,
+      }
+    }
   },
   plugins: [
     react(),

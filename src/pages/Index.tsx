@@ -19,6 +19,7 @@ import Navbar from '@/components/Navbar';
 import HowVaaniWorks from '@/components/HowVaaniWorks';
 import PlaygroundPrompts from '@/components/PlayGroundPrompts';
 import AudioTranscription from '@/components/Speech2Text';
+import Talk2Bill from '@/components/Talk2Bill';
 import ProductionInsights from '@/components/ProductionInsights';
 import DataScience from '@/components/DataScience';
 import Product from '@/components/Product';
@@ -37,7 +38,7 @@ const STORAGE_KEYS = {
 } as const;
 
 /** Available pages/routes in the application */
-type PageId = 'how-vaani-works' | 'playground-prompts' | 'speech-to-text' | 'prod-insights' | 'data-science' | 'product';
+type PageId = 'how-vaani-works' | 'playground-prompts' | 'speech-to-text' | 'talk2bill' | 'prod-insights' | 'data-science' | 'product';
 
 /** Default page to show after login */
 const DEFAULT_PAGE: PageId = 'how-vaani-works';
@@ -179,6 +180,8 @@ const Index: React.FC = () => {
         return <PlaygroundPrompts />;
       case 'speech-to-text':
         return <AudioTranscription />;
+      case 'talk2bill':
+        return <Talk2Bill />;
       case 'prod-insights':
         return <ProductionInsights />;
       case 'data-science':

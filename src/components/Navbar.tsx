@@ -56,6 +56,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'how-vaani-works', label: 'How Vaani Works', icon: '📖' },
   { id: 'playground-prompts', label: 'Playground', icon: '🔍' },
   { id: 'speech-to-text', label: 'Speech to Text', icon: '🎤' },
+  { id: 'talk2bill', label: 'Talk to Bill', icon: '💬' },
   { id: 'prod-insights', label: 'Prod Insights', icon: '📈' },
   { id: 'data-science', label: 'Data Science', icon: '🧠' },
   { id: 'product', label: 'Product', icon: '🛠️' },
