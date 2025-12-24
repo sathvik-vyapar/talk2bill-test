@@ -586,6 +586,15 @@ Runs at: `http://localhost:8080/talk2bill-test/`
 
 ## Deployment
 
+### Claude Code Workflow
+When using Claude Code for development, the following commands are bundled together:
+- **"commit"** = commit + push + deploy
+
+This means when you ask Claude to "commit" changes, it will automatically:
+1. Stage and commit the changes with a descriptive message
+2. Push to the remote repository
+3. Run `npm run deploy` to deploy to GitHub Pages
+
 ### GitHub Pages Deployment
 After pushing all your changes, deploy to GitHub Pages:
 ```bash
