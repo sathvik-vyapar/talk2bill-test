@@ -69,19 +69,14 @@ interface AppSidebarProps {
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    label: 'Learn',
-    items: [
-      {
-        id: 'how-vaani-works',
-        label: 'How It Works',
-        icon: BookOpen,
-        description: 'Understand VAANI',
-      },
-    ],
-  },
-  {
     label: 'Test',
     items: [
+      {
+        id: 'talk2bill',
+        label: 'Talk2Bill',
+        icon: MessageSquare,
+        description: 'Full pipeline test',
+      },
       {
         id: 'speech-to-text',
         label: 'Speech to Text',
@@ -93,12 +88,6 @@ const NAV_GROUPS: NavGroup[] = [
         label: 'Playground',
         icon: FlaskConical,
         description: 'Test prompts',
-      },
-      {
-        id: 'talk2bill',
-        label: 'Talk2Bill',
-        icon: MessageSquare,
-        description: 'Full pipeline test',
       },
     ],
   },
@@ -127,6 +116,17 @@ const NAV_GROUPS: NavGroup[] = [
         label: 'Product',
         icon: Package,
         description: 'Prompts & specs',
+      },
+    ],
+  },
+  {
+    label: 'Learn',
+    items: [
+      {
+        id: 'how-vaani-works',
+        label: 'How It Works',
+        icon: BookOpen,
+        description: 'Understand VAANI',
       },
     ],
   },

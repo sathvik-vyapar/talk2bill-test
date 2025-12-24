@@ -52,8 +52,8 @@ const STORAGE_KEYS = {
 /** Available pages/routes in the application */
 type PageId = 'how-vaani-works' | 'playground-prompts' | 'speech-to-text' | 'talk2bill' | 'prod-insights' | 'data-science' | 'product';
 
-/** Default page to show after login */
-const DEFAULT_PAGE: PageId = 'how-vaani-works';
+/** Default page to show after login (Talk2Bill is the primary feature) */
+const DEFAULT_PAGE: PageId = 'talk2bill';
 
 /** Page metadata for breadcrumbs and headers */
 const PAGE_META: Record<PageId, { title: string; section: string; description: string }> = {
