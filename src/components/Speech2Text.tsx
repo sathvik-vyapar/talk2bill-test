@@ -653,125 +653,112 @@ const AudioTranscription: React.FC = () => {
   );
 
   const renderRecordingSection = () => (
-    <Card className="border-2 border-dashed border-gray-200">
-      <CardContent className="p-6">
-        <div className="text-center space-y-4">
-          {/* Recording Button with Timer */}
-          {!audioUrl && (
-            <>
-              <div className="flex flex-col items-center gap-4">
-                <button
-                  onClick={isRecording ? stopRecording : startRecording}
-                  disabled={isProcessing}
-                  className={`w-24 h-24 rounded-full flex items-center justify-center transition-all ${
-                    isRecording
-                      ? 'bg-red-500 hover:bg-red-600 animate-pulse'
-                      : 'bg-blue-500 hover:bg-blue-600'
-                  } text-white shadow-lg hover:shadow-xl`}
-                >
-                  {isRecording ? (
-                    <Square className="w-8 h-8" />
-                  ) : (
-                    <Mic className="w-10 h-10" />
-                  )}
-                </button>
+    <Card className="border border-gray-200">
+      <CardContent className="p-4">
+        {/* Recording/Upload - Compact inline layout */}
+        {!audioUrl && (
+          <div className="flex items-center gap-4">
+            {/* Mic Button */}
+            <button
+              onClick={isRecording ? stopRecording : startRecording}
+              disabled={isProcessing}
+              className={`flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center transition-all ${
+                isRecording
+                  ? 'bg-red-500 hover:bg-red-600 animate-pulse'
+                  : 'bg-blue-500 hover:bg-blue-600'
+              } text-white shadow-md hover:shadow-lg`}
+            >
+              {isRecording ? <Square className="w-5 h-5" /> : <Mic className="w-6 h-6" />}
+            </button>
 
-                {isRecording && (
+            {/* Recording State / Instructions */}
+            <div className="flex-1 min-w-0">
+              {isRecording ? (
+                <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2 text-red-600">
-                    <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-                    <span className="font-mono text-2xl">{formatTime(recordingTime)}</span>
+                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                    <span className="font-mono text-lg font-medium">{formatTime(recordingTime)}</span>
                   </div>
-                )}
-
-                <p className="text-gray-500 text-sm">
-                  {isRecording ? 'Click to stop recording' : 'Click to start recording'}
-                </p>
-              </div>
-
-              {/* Divider */}
-              <div className="flex items-center gap-4 my-6">
-                <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-gray-400 text-sm">or</span>
-                <div className="flex-1 h-px bg-gray-200" />
-              </div>
-
-              {/* File Upload Zone */}
-              <div
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onClick={() => fileInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-lg p-8 cursor-pointer transition-all ${
-                  isDragging
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
-                }`}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="audio/*"
-                  onChange={handleFileInputChange}
-                  className="hidden"
-                />
-                <Upload className={`w-10 h-10 mx-auto mb-3 ${isDragging ? 'text-blue-500' : 'text-gray-400'}`} />
-                <p className="text-gray-600 font-medium">
-                  {isDragging ? 'Drop your audio file here' : 'Drag & drop an audio file'}
-                </p>
-                <p className="text-gray-400 text-sm mt-1">or click to browse (MP3, WAV, etc.)</p>
-              </div>
-            </>
-          )}
-
-          {/* Audio Player when recorded/uploaded */}
-          {audioUrl && (
-            <div className="space-y-4">
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <FileAudio className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div className="text-left">
-                    <p className="font-medium text-gray-900">{audioFileName}</p>
-                    {recordingTime > 0 && (
-                      <p className="text-sm text-gray-500">Duration: {formatTime(recordingTime)}</p>
-                    )}
-                  </div>
+                  <span className="text-sm text-gray-500">Recording... Click to stop</span>
                 </div>
-                <audio src={audioUrl} controls className="w-full" />
-              </div>
-
-              <div className="flex justify-center gap-3">
-                <Button
-                  onClick={handleReRecord}
-                  variant="outline"
-                  className="flex items-center gap-2"
-                  disabled={isProcessing}
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  Start Over
-                </Button>
-                <Button
-                  onClick={handleProcessAudio}
-                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
-                  disabled={isProcessing}
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4" />
-                      Process Audio
-                    </>
-                  )}
-                </Button>
-              </div>
+              ) : (
+                <div>
+                  <p className="text-sm font-medium text-gray-700">Click mic to record</p>
+                  <p className="text-xs text-gray-400">or drag & drop an audio file</p>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+
+            {/* Upload Button */}
+            <div
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onClick={() => fileInputRef.current?.click()}
+              className="flex-shrink-0"
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="audio/*"
+                onChange={handleFileInputChange}
+                className="hidden"
+              />
+              <Button variant="outline" size="sm" className={`gap-1.5 ${isDragging ? 'border-blue-500 bg-blue-50' : ''}`}>
+                <Upload className="w-4 h-4" />
+                Upload
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Audio Player when recorded/uploaded - Compact */}
+        {audioUrl && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+              <div className="p-1.5 bg-blue-100 rounded">
+                <FileAudio className="w-4 h-4 text-blue-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">{audioFileName}</p>
+                {recordingTime > 0 && (
+                  <p className="text-xs text-gray-500">{formatTime(recordingTime)}</p>
+                )}
+              </div>
+              <audio src={audioUrl} controls className="h-8 max-w-[200px]" />
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <Button
+                onClick={handleReRecord}
+                variant="ghost"
+                size="sm"
+                disabled={isProcessing}
+              >
+                <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+                Reset
+              </Button>
+              <Button
+                onClick={handleProcessAudio}
+                size="sm"
+                className="bg-blue-600 hover:bg-blue-700"
+                disabled={isProcessing}
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+                    Process
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -1019,80 +1006,39 @@ const AudioTranscription: React.FC = () => {
       {/* Workflow Steps */}
       {renderWorkflowSteps()}
 
-      {/*
-        =======================================================================
-        VOICE SAMPLE SELECTION SECTION
-        =======================================================================
-        This section provides pre-recorded voice samples for testing STT models.
-
-        Layout: Two-column grid on desktop, stacked on mobile
-        - Left (1/3): Transaction type filter dropdown
-        - Right (2/3): Voice sample selector showing filtered samples
-
-        User flow:
-        1. User optionally selects a transaction type to filter samples
-        2. VoiceSampleSelector displays matching samples with play/transcript options
-        3. User clicks "Use this sample" to load it into the audio player
-        4. User clicks "Process Audio" to compare Whisper vs Sarvam STT results
-
-        Key difference from Talk2Bill:
-        - Speech2Text supports ALL 6 transaction types (not just 3)
-        - Uses string-based type names directly (no numeric conversion needed)
-      */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/*
-          Transaction Type Filter Dropdown
-          ---------------------------------
-          Controls which voice samples are shown in VoiceSampleSelector.
-          "All Types" shows all 15 samples, other options filter by transaction_type.
-        */}
-        <Card className="lg:col-span-1">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Filter className="w-4 h-4 text-gray-600" />
-              Filter Samples
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Select
-              value={selectedTransactionType}
-              onValueChange={setSelectedTransactionType}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="All Transaction Types" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="Expense">Expense</SelectItem>
-                <SelectItem value="Sale">Sale</SelectItem>
-                <SelectItem value="Payment In">Payment In</SelectItem>
-                <SelectItem value="Payment Out">Payment Out</SelectItem>
-                <SelectItem value="Sale Order">Sale Order</SelectItem>
-                <SelectItem value="Delivery Challan">Delivery Challan</SelectItem>
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
-
-        {/*
-          Voice Sample Selector Component
-          --------------------------------
-          Shows filtered voice samples with:
-          - Language & complexity badges
-          - Play button (previews audio)
-          - Expandable transcript (shows what's spoken)
-          - "Use this sample" button (loads into audio player)
-
-          Data source: /public/data/voice-samples.json
-          Audio files: /public/audio/samples/{filename}.wav
-        */}
-        <div className="lg:col-span-2">
-          <VoiceSampleSelector
-            transactionType={selectedTransactionType}
-            onSelectSample={handleVoiceSampleSelect}
-            disabled={isRecording || isProcessing}
-          />
+      {/* Voice Sample Selection - Compact Layout */}
+      <div className="space-y-2">
+        {/* Inline Filter */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <span className="text-sm text-gray-500 flex items-center gap-1.5">
+            <Filter className="w-3.5 h-3.5" />
+            Filter:
+          </span>
+          <Select
+            value={selectedTransactionType}
+            onValueChange={setSelectedTransactionType}
+          >
+            <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm">
+              <SelectValue placeholder="All Types" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="Expense">Expense</SelectItem>
+              <SelectItem value="Sale">Sale</SelectItem>
+              <SelectItem value="Payment In">Payment In</SelectItem>
+              <SelectItem value="Payment Out">Payment Out</SelectItem>
+              <SelectItem value="Sale Order">Sale Order</SelectItem>
+              <SelectItem value="Delivery Challan">Delivery Challan</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
+
+        {/* Voice Sample Selector */}
+        <VoiceSampleSelector
+          transactionType={selectedTransactionType}
+          onSelectSample={handleVoiceSampleSelect}
+          disabled={isRecording || isProcessing}
+        />
       </div>
 
       {/* Success Message */}
