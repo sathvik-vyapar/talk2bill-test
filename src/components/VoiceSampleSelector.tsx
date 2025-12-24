@@ -1,12 +1,51 @@
 /**
  * VoiceSampleSelector.tsx
  *
- * Reusable component for selecting and playing voice samples.
- * Features:
- * - Filters samples by transaction type
- * - Play button to listen to audio (shows alert if unavailable)
- * - Expandable transcript view
- * - Use as input functionality
+ * A reusable component for browsing, playing, and selecting pre-recorded voice samples
+ * for testing the VAANI voice-to-invoice pipeline.
+ *
+ * ============================================================================
+ * PURPOSE & CONTEXT
+ * ============================================================================
+ * This component provides sample voice inputs for testing the STT (Speech-to-Text)
+ * and Talk2Bill features. It allows users to:
+ * 1. Browse available voice samples filtered by transaction type
+ * 2. Play audio samples to hear what's being spoken
+ * 3. View the transcript of what's spoken in each sample
+ * 4. Select a sample to use as input for processing
+ *
+ * ============================================================================
+ * INTEGRATION POINTS
+ * ============================================================================
+ * This component is used in:
+ * - Talk2Bill.tsx: Appears below transaction type selection, filters samples
+ *   based on Payment In (3), Payment Out (4), or Expense (7)
+ * - Speech2Text.tsx: Appears with a transaction type filter dropdown,
+ *   supports all transaction types including Sale, Sale Order, Delivery Challan
+ *
+ * ============================================================================
+ * DATA SOURCE
+ * ============================================================================
+ * Voice samples metadata is loaded from: /public/data/voice-samples.json
+ * Audio files are expected at: /public/audio/samples/{filename}.wav
+ *
+ * The JSON file contains:
+ * - filename: Name of the .wav file
+ * - transaction_type: Expense, Sale, Payment In, Payment Out, Sale Order, Delivery Challan
+ * - language: Hindi, English, or Hinglish
+ * - complexity: Medium, Medium-High, or Complex
+ * - duration_seconds: Length of the audio
+ * - description: Brief description of what's in the audio
+ * - text: Full transcript of what's spoken
+ *
+ * ============================================================================
+ * AUDIO FILE AVAILABILITY
+ * ============================================================================
+ * Audio files may not always be present. The component:
+ * 1. Checks if each audio file exists via HEAD request on mount
+ * 2. Shows grayed-out play button if unavailable
+ * 3. Displays a dialog prompting user to contact admin if they try to play/use
+ *    an unavailable sample
  *
  * @author Vyapar Team
  * @version 1.0.0
@@ -46,16 +85,37 @@ import {
 // TYPE DEFINITIONS
 // =============================================================================
 
+/**
+ * Represents a single voice sample entry from voice-samples.json
+ * This interface is exported so parent components can type their handlers
+ *
+ * @example
+ * // In Talk2Bill.tsx or Speech2Text.tsx:
+ * const handleVoiceSampleSelect = (sample: VoiceSample, audioUrl: string | null) => {
+ *   // Load the audio as input for processing
+ * };
+ */
 export interface VoiceSample {
+  /** Filename of the audio file (e.g., "expense_hindi_medium_01.wav") */
   filename: string;
+  /** Transaction type: Expense, Sale, Payment In, Payment Out, Sale Order, Delivery Challan */
   transaction_type: string;
+  /** Language spoken: Hindi, English, or Hinglish (mixed Hindi-English) */
   language: string;
+  /** Complexity level: Medium, Medium-High, or Complex */
   complexity: string;
+  /** Duration of the audio in seconds */
   duration_seconds: number;
+  /** Brief description of the transaction in the audio */
   description: string;
+  /** Full transcript of what's spoken in the audio (in original language) */
   text: string;
 }
 
+/**
+ * Structure of the voice-samples.json file
+ * Contains the array of samples plus summary statistics
+ */
 interface VoiceSamplesData {
   voice_samples: VoiceSample[];
   summary: {
@@ -66,14 +126,30 @@ interface VoiceSamplesData {
   };
 }
 
+/**
+ * Props for the VoiceSampleSelector component
+ */
 interface VoiceSampleSelectorProps {
-  /** Transaction type to filter samples */
+  /**
+   * Transaction type to filter samples by.
+   * - For Talk2Bill: Pass numeric codes as strings ("3", "4", "7")
+   * - For Speech2Text: Pass type names ("Expense", "Sale", etc.)
+   * - Pass "all" to show all samples
+   */
   transactionType?: string;
-  /** Callback when user selects a sample to use as input */
+
+  /**
+   * Callback fired when user clicks "Use this sample"
+   * Parent component should load the audio URL as input for processing
+   * @param sample - The selected voice sample metadata
+   * @param audioUrl - URL to the audio file, or null if unavailable
+   */
   onSelectSample: (sample: VoiceSample, audioUrl: string | null) => void;
-  /** Whether the selector is disabled */
+
+  /** Whether the selector is disabled (e.g., during recording/processing) */
   disabled?: boolean;
-  /** Custom class name */
+
+  /** Additional CSS classes for the card container */
   className?: string;
 }
 
@@ -81,33 +157,59 @@ interface VoiceSampleSelectorProps {
 // CONSTANTS
 // =============================================================================
 
-/** Base path for audio files */
+/**
+ * Base path where audio sample files are stored.
+ * Audio files should be placed in public/audio/samples/ with .wav extension.
+ * The path includes the repo name for GitHub Pages deployment.
+ */
 const AUDIO_BASE_PATH = '/talk2bill-test/audio/samples/';
 
-/** Map Talk2Bill transaction types to voice sample types */
+/**
+ * Maps transaction type identifiers to voice sample transaction_type values.
+ *
+ * This mapping supports two input formats:
+ * 1. Numeric codes from Talk2Bill (TransactionType enum values as strings)
+ *    - '3' = PAYMENT_IN
+ *    - '4' = PAYMENT_OUT
+ *    - '7' = EXPENSE
+ *
+ * 2. String names from Speech2Text dropdown
+ *    - 'Expense', 'Sale', 'Payment In', 'Payment Out', 'Sale Order', 'Delivery Challan'
+ *
+ * Each key maps to an array of allowed transaction types for flexible filtering.
+ */
 const TRANSACTION_TYPE_MAP: Record<string, string[]> = {
-  '7': ['Expense'], // EXPENSE
-  '3': ['Payment In'], // PAYMENT_IN
-  '4': ['Payment Out'], // PAYMENT_OUT
-  // For Speech2Text (string-based)
+  // Talk2Bill numeric codes (from TransactionType enum in Talk2Bill.tsx)
+  '7': ['Expense'],      // TransactionType.EXPENSE = 7
+  '3': ['Payment In'],   // TransactionType.PAYMENT_IN = 3
+  '4': ['Payment Out'],  // TransactionType.PAYMENT_OUT = 4
+
+  // Speech2Text string-based filters
   'Expense': ['Expense'],
   'Payment In': ['Payment In'],
   'Payment Out': ['Payment Out'],
   'Sale': ['Sale'],
   'Sale Order': ['Sale Order'],
   'Delivery Challan': ['Delivery Challan'],
-  // All types for no filter
+
+  // Show all samples when no filter is applied
   'all': ['Expense', 'Sale', 'Payment In', 'Payment Out', 'Sale Order', 'Delivery Challan'],
 };
 
-/** Complexity badge colors */
+/**
+ * Tailwind CSS classes for complexity level badges.
+ * Colors indicate difficulty: green (easy) -> yellow (medium) -> red (hard)
+ */
 const COMPLEXITY_COLORS: Record<string, string> = {
   'Medium': 'bg-green-100 text-green-700',
   'Medium-High': 'bg-yellow-100 text-yellow-700',
   'Complex': 'bg-red-100 text-red-700',
 };
 
-/** Language badge colors */
+/**
+ * Tailwind CSS classes for language badges.
+ * Distinct colors help users quickly identify the language of each sample.
+ */
 const LANGUAGE_COLORS: Record<string, string> = {
   'Hindi': 'bg-orange-100 text-orange-700',
   'English': 'bg-blue-100 text-blue-700',
@@ -153,27 +255,64 @@ const VoiceSampleSelector: React.FC<VoiceSampleSelectorProps> = ({
   // STATE
   // ---------------------------------------------------------------------------
 
+  /** All voice samples loaded from JSON (unfiltered) */
   const [samples, setSamples] = useState<VoiceSample[]>([]);
+
+  /** Samples filtered by the current transaction type */
   const [filteredSamples, setFilteredSamples] = useState<VoiceSample[]>([]);
+
+  /** Loading state while fetching voice-samples.json */
   const [isLoading, setIsLoading] = useState(true);
+
+  /** Error message if JSON fetch fails */
   const [error, setError] = useState<string | null>(null);
+
+  /** Filename of the sample whose transcript is currently expanded */
   const [expandedSample, setExpandedSample] = useState<string | null>(null);
+
+  /** Filename of the sample currently being played (null if nothing playing) */
   const [playingSample, setPlayingSample] = useState<string | null>(null);
+
+  /** Controls visibility of the "Audio Not Available" dialog */
   const [showUnavailableDialog, setShowUnavailableDialog] = useState(false);
+
+  /**
+   * Map of filename -> boolean indicating if audio file exists.
+   * Populated on mount by checking each file via HEAD request.
+   */
   const [audioAvailability, setAudioAvailability] = useState<Record<string, boolean>>({});
+
+  /** Whether the sample list is expanded (collapsible card) */
   const [isExpanded, setIsExpanded] = useState(true);
 
+  /**
+   * Reference to the current Audio element for playback control.
+   * Used to pause/stop audio when switching samples or unmounting.
+   */
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // ---------------------------------------------------------------------------
   // EFFECTS
   // ---------------------------------------------------------------------------
 
-  // Load voice samples on mount
+  /**
+   * Load voice samples metadata on component mount.
+   *
+   * This effect:
+   * 1. Fetches the voice-samples.json file from public/data/
+   * 2. Stores the samples in state
+   * 3. Checks each audio file's availability via HEAD requests
+   *    (to show grayed-out state for missing files)
+   *
+   * Note: Audio availability checks are done sequentially to avoid
+   * overwhelming the server with parallel requests.
+   */
   useEffect(() => {
     const loadSamples = async () => {
       try {
         setIsLoading(true);
+
+        // Fetch the voice samples metadata JSON
         const response = await fetch('/talk2bill-test/data/voice-samples.json');
         if (!response.ok) {
           throw new Error('Failed to load voice samples');
@@ -181,7 +320,8 @@ const VoiceSampleSelector: React.FC<VoiceSampleSelectorProps> = ({
         const data: VoiceSamplesData = await response.json();
         setSamples(data.voice_samples);
 
-        // Check audio availability for each sample
+        // Check if each audio file actually exists on the server
+        // This allows us to show unavailable state before user tries to play
         const availability: Record<string, boolean> = {};
         for (const sample of data.voice_samples) {
           availability[sample.filename] = await checkAudioExists(sample.filename);
@@ -198,7 +338,12 @@ const VoiceSampleSelector: React.FC<VoiceSampleSelectorProps> = ({
     loadSamples();
   }, []);
 
-  // Filter samples when transaction type changes
+  /**
+   * Filter samples when transaction type prop changes.
+   *
+   * Uses TRANSACTION_TYPE_MAP to convert the prop value to allowed
+   * transaction types, then filters the samples array.
+   */
   useEffect(() => {
     const allowedTypes = TRANSACTION_TYPE_MAP[transactionType] || TRANSACTION_TYPE_MAP['all'];
     const filtered = samples.filter((sample) =>
@@ -207,7 +352,10 @@ const VoiceSampleSelector: React.FC<VoiceSampleSelectorProps> = ({
     setFilteredSamples(filtered);
   }, [transactionType, samples]);
 
-  // Cleanup audio on unmount
+  /**
+   * Cleanup effect: Stop audio playback when component unmounts.
+   * Prevents audio from continuing to play after navigating away.
+   */
   useEffect(() => {
     return () => {
       if (audioRef.current) {
@@ -221,30 +369,46 @@ const VoiceSampleSelector: React.FC<VoiceSampleSelectorProps> = ({
   // HANDLERS
   // ---------------------------------------------------------------------------
 
+  /**
+   * Handles play/pause button click for a voice sample.
+   *
+   * Behavior:
+   * - If audio file is unavailable: Shows the "contact admin" dialog
+   * - If this sample is already playing: Pauses it
+   * - If another sample is playing: Stops it and plays this one
+   * - If nothing is playing: Starts playing this sample
+   *
+   * @param sample - The voice sample to play/pause
+   */
   const handlePlayPause = async (sample: VoiceSample) => {
     const isAvailable = audioAvailability[sample.filename];
 
+    // Show dialog if audio file doesn't exist
     if (!isAvailable) {
       setShowUnavailableDialog(true);
       return;
     }
 
+    // Toggle pause if this sample is already playing
     if (playingSample === sample.filename) {
-      // Pause current audio
       if (audioRef.current) {
         audioRef.current.pause();
       }
       setPlayingSample(null);
     } else {
-      // Stop any existing audio
+      // Stop any currently playing audio before starting new one
       if (audioRef.current) {
         audioRef.current.pause();
       }
 
-      // Play new audio
+      // Create new Audio element and start playback
       const audioUrl = `${AUDIO_BASE_PATH}${sample.filename}`;
       audioRef.current = new Audio(audioUrl);
+
+      // Reset state when audio ends naturally
       audioRef.current.onended = () => setPlayingSample(null);
+
+      // Handle playback errors (e.g., file not found, format issues)
       audioRef.current.onerror = () => {
         setPlayingSample(null);
         setShowUnavailableDialog(true);
@@ -254,23 +418,41 @@ const VoiceSampleSelector: React.FC<VoiceSampleSelectorProps> = ({
         await audioRef.current.play();
         setPlayingSample(sample.filename);
       } catch {
+        // Browser may block autoplay - show unavailable dialog
         setShowUnavailableDialog(true);
       }
     }
   };
 
+  /**
+   * Handles "Use this sample" button click.
+   *
+   * If the audio file is available, calls the onSelectSample prop
+   * to notify the parent component (Talk2Bill or Speech2Text) to
+   * load this sample as input for processing.
+   *
+   * @param sample - The voice sample to use as input
+   */
   const handleSelectSample = (sample: VoiceSample) => {
     const isAvailable = audioAvailability[sample.filename];
     const audioUrl = isAvailable ? `${AUDIO_BASE_PATH}${sample.filename}` : null;
 
+    // Can't use unavailable samples
     if (!isAvailable) {
       setShowUnavailableDialog(true);
       return;
     }
 
+    // Notify parent component to load this sample
     onSelectSample(sample, audioUrl);
   };
 
+  /**
+   * Toggles the expanded state of a sample's transcript.
+   * Only one transcript can be expanded at a time.
+   *
+   * @param filename - The filename of the sample to toggle
+   */
   const toggleExpanded = (filename: string) => {
     setExpandedSample(expandedSample === filename ? null : filename);
   };

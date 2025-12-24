@@ -566,25 +566,48 @@ const AudioTranscription: React.FC = () => {
   };
 
   /**
-   * Handles selection of a voice sample
+   * Handles selection of a voice sample from VoiceSampleSelector.
+   *
+   * This callback is triggered when the user clicks "Use this sample" in the
+   * VoiceSampleSelector component. It:
+   * 1. Fetches the audio file from the provided URL
+   * 2. Creates a blob URL for the audio player
+   * 3. Sets the audio state so it appears in the recording/upload section
+   * 4. User can then click "Process Audio" to compare STT models
+   *
+   * Integration with VoiceSampleSelector:
+   * - User selects transaction type from dropdown (selectedTransactionType state)
+   * - VoiceSampleSelector filters samples based on that selection
+   * - When user selects a sample, this handler loads it for processing
+   *
+   * Unlike Talk2Bill:
+   * - Speech2Text supports ALL transaction types (including Sale, Sale Order, etc.)
+   * - Uses string-based type names instead of numeric codes
+   *
+   * @param sample - Voice sample metadata (from VoiceSampleSelector)
+   * @param audioUrl - URL to the audio file, or null if unavailable
    */
   const handleVoiceSampleSelect = async (sample: VoiceSample, audioUrl: string | null) => {
+    // Can't proceed without a valid audio URL
     if (!audioUrl) return;
 
-    // Clean up previous audio
+    // Clean up any previous audio blob URL to prevent memory leaks
     if (audioUrl) {
       URL.revokeObjectURL(audioUrl);
     }
 
     try {
-      // Fetch the audio file and create a blob URL
+      // Fetch the audio file from the samples directory
       const response = await fetch(audioUrl);
       if (!response.ok) {
         throw new Error('Failed to fetch audio sample');
       }
+
+      // Convert to blob and create a local URL for the audio player
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
 
+      // Set the audio state - this will show the audio player UI
       setAudioUrl(blobUrl);
       setAudioFileName(sample.filename);
       setRecordingTime(sample.duration_seconds);
@@ -996,9 +1019,33 @@ const AudioTranscription: React.FC = () => {
       {/* Workflow Steps */}
       {renderWorkflowSteps()}
 
-      {/* Transaction Type Filter and Voice Samples */}
+      {/*
+        =======================================================================
+        VOICE SAMPLE SELECTION SECTION
+        =======================================================================
+        This section provides pre-recorded voice samples for testing STT models.
+
+        Layout: Two-column grid on desktop, stacked on mobile
+        - Left (1/3): Transaction type filter dropdown
+        - Right (2/3): Voice sample selector showing filtered samples
+
+        User flow:
+        1. User optionally selects a transaction type to filter samples
+        2. VoiceSampleSelector displays matching samples with play/transcript options
+        3. User clicks "Use this sample" to load it into the audio player
+        4. User clicks "Process Audio" to compare Whisper vs Sarvam STT results
+
+        Key difference from Talk2Bill:
+        - Speech2Text supports ALL 6 transaction types (not just 3)
+        - Uses string-based type names directly (no numeric conversion needed)
+      */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Transaction Type Filter */}
+        {/*
+          Transaction Type Filter Dropdown
+          ---------------------------------
+          Controls which voice samples are shown in VoiceSampleSelector.
+          "All Types" shows all 15 samples, other options filter by transaction_type.
+        */}
         <Card className="lg:col-span-1">
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
@@ -1027,7 +1074,18 @@ const AudioTranscription: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Voice Sample Selector */}
+        {/*
+          Voice Sample Selector Component
+          --------------------------------
+          Shows filtered voice samples with:
+          - Language & complexity badges
+          - Play button (previews audio)
+          - Expandable transcript (shows what's spoken)
+          - "Use this sample" button (loads into audio player)
+
+          Data source: /public/data/voice-samples.json
+          Audio files: /public/audio/samples/{filename}.wav
+        */}
         <div className="lg:col-span-2">
           <VoiceSampleSelector
             transactionType={selectedTransactionType}

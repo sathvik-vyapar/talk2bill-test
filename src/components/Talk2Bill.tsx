@@ -779,25 +779,44 @@ const Talk2Bill: React.FC = () => {
   };
 
   /**
-   * Handles selection of a voice sample
+   * Handles selection of a voice sample from VoiceSampleSelector.
+   *
+   * This callback is triggered when the user clicks "Use this sample" in the
+   * VoiceSampleSelector component. It:
+   * 1. Fetches the audio file from the provided URL
+   * 2. Creates a blob URL for the audio player
+   * 3. Sets the audio state so it appears in the recording/upload section
+   * 4. User can then click "Upload & Process" to send it through the pipeline
+   *
+   * Integration with VoiceSampleSelector:
+   * - VoiceSampleSelector filters samples based on transactionType prop
+   * - When user selects a sample, this handler receives the sample metadata
+   *   and the URL to the audio file
+   *
+   * @param sample - Voice sample metadata (from VoiceSampleSelector)
+   * @param audioUrl - URL to the audio file, or null if unavailable
    */
   const handleVoiceSampleSelect = async (sample: VoiceSample, audioUrl: string | null) => {
+    // Can't proceed without a valid audio URL
     if (!audioUrl) return;
 
-    // Clean up previous audio
+    // Clean up any previous audio blob URL to prevent memory leaks
     if (audioUrl) {
       URL.revokeObjectURL(audioUrl);
     }
 
     try {
-      // Fetch the audio file and create a blob URL
+      // Fetch the audio file from the samples directory
       const response = await fetch(audioUrl);
       if (!response.ok) {
         throw new Error('Failed to fetch audio sample');
       }
+
+      // Convert to blob and create a local URL for the audio player
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
 
+      // Set the audio state - this will show the audio player UI
       setAudioUrl(blobUrl);
       setAudioFileName(sample.filename);
       setRecordingTime(sample.duration_seconds);
@@ -869,7 +888,26 @@ const Talk2Bill: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Voice Sample Selector */}
+      {/*
+        Voice Sample Selector Component
+        ================================
+        Displays pre-recorded voice samples for testing the Talk2Bill pipeline.
+
+        Props:
+        - transactionType: Filters samples to match selected type (7=Expense, 3=Payment In, 4=Payment Out)
+        - onSelectSample: Called when user clicks "Use this sample" - loads audio as input
+        - disabled: Prevents interaction during recording/upload/polling
+
+        Data source: /public/data/voice-samples.json
+        Audio files: /public/audio/samples/{filename}.wav
+
+        User flow:
+        1. User selects a transaction type above
+        2. VoiceSampleSelector shows filtered samples
+        3. User can play to preview, view transcript
+        4. Clicking "Use this sample" loads it into the audio player below
+        5. User clicks "Upload & Process" to send through the pipeline
+      */}
       <VoiceSampleSelector
         transactionType={transactionType.toString()}
         onSelectSample={handleVoiceSampleSelect}
