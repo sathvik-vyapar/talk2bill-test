@@ -1,0 +1,29 @@
+[
+  {
+    "id": "debate_2025-12-24_1766579291960",
+    "date": "2025-12-24T12:35:00.218Z",
+    "title": "Vaani Prompt Optimization Debate",
+    "participants": ["Claude Sonnet", "Claude Opus", "Gemini Pro", "Gemini Flash"],
+    "mode": "full",
+    "insightsCount": 6,
+    "recommendationsCount": 6
+  },
+  {
+    "id": "debate_2025-12-24_1766578834601",
+    "date": "2025-12-24T11:53:54.509Z",
+    "title": "Vaani Prompt Optimization Debate",
+    "participants": ["Claude Sonnet", "Claude Opus", "Gemini Pro", "Gemini Flash"],
+    "mode": "full",
+    "insightsCount": 0,
+    "recommendationsCount": 0
+  },
+  {
+    "id": "debate_2025-12-24_1766575972192",
+    "date": "2025-12-24T11:36:20.300Z",
+    "title": "Vaani Prompt Optimization Debate",
+    "participants": ["Claude Sonnet", "Claude Opus"],
+    "mode": "quick",
+    "insightsCount": 6,
+    "recommendationsCount": 6
+  }
+]
