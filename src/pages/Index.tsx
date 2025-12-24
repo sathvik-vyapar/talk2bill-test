@@ -1,21 +1,21 @@
 /**
  * Index.tsx
  *
- * Main application entry point and router.
+ * Main application entry point with sidebar layout.
  * Handles:
  * - User authentication state management
  * - Session persistence (48-hour sessions stored in localStorage)
- * - Page navigation between different sections
+ * - Page navigation with sidebar
  *
  * @author Vyapar Team
- * @version 2.0.0
+ * @version 3.0.0
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 
 // Components
 import LoginForm from '@/components/LoginForm';
-import Navbar from '@/components/Navbar';
+import AppSidebar from '@/components/AppSidebar';
 import HowVaaniWorks from '@/components/HowVaaniWorks';
 import PlaygroundPrompts from '@/components/PlayGroundPrompts';
 import AudioTranscription from '@/components/Speech2Text';
@@ -23,6 +23,17 @@ import Talk2Bill from '@/components/Talk2Bill';
 import ProductionInsights from '@/components/ProductionInsights';
 import DataScience from '@/components/DataScience';
 import Product from '@/components/Product';
+
+// UI Components
+import { SidebarProvider, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
+import { Separator } from '@/components/ui/separator';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
 
 // =============================================================================
 // CONSTANTS
@@ -35,6 +46,7 @@ const SESSION_DURATION_MS = 48 * 60 * 60 * 1000;
 const STORAGE_KEYS = {
   AUTH_TOKEN: 'authToken',
   LOGIN_TIMESTAMP: 'loginTimestamp',
+  SIDEBAR_STATE: 'sidebar:state',
 } as const;
 
 /** Available pages/routes in the application */
@@ -42,6 +54,45 @@ type PageId = 'how-vaani-works' | 'playground-prompts' | 'speech-to-text' | 'tal
 
 /** Default page to show after login */
 const DEFAULT_PAGE: PageId = 'how-vaani-works';
+
+/** Page metadata for breadcrumbs and headers */
+const PAGE_META: Record<PageId, { title: string; section: string; description: string }> = {
+  'how-vaani-works': {
+    title: 'How It Works',
+    section: 'Learn',
+    description: 'Understand how VAANI processes voice to invoice',
+  },
+  'speech-to-text': {
+    title: 'Speech to Text',
+    section: 'Test',
+    description: 'Test speech-to-text models and transcription',
+  },
+  'playground-prompts': {
+    title: 'Playground',
+    section: 'Test',
+    description: 'Test prompts and LLM responses',
+  },
+  'talk2bill': {
+    title: 'Talk2Bill',
+    section: 'Test',
+    description: 'Full voice-to-invoice pipeline testing',
+  },
+  'prod-insights': {
+    title: 'Prod Insights',
+    section: 'Analyze',
+    description: 'Production metrics and analytics',
+  },
+  'data-science': {
+    title: 'Architecture',
+    section: 'Reference',
+    description: 'System architecture and pipeline design',
+  },
+  'product': {
+    title: 'Product',
+    section: 'Reference',
+    description: 'Prompts, test cases, and product specs',
+  },
+};
 
 // =============================================================================
 // HELPER FUNCTIONS
@@ -85,7 +136,7 @@ const clearSessionData = (): void => {
 /**
  * Index Component
  *
- * The main application container that manages:
+ * The main application container with sidebar layout that manages:
  * - Authentication state with 48-hour persistent sessions
  * - Navigation between different dashboard sections
  * - Session validation on app load
@@ -215,23 +266,51 @@ const Index: React.FC = () => {
     return <LoginForm onLogin={handleLogin} />;
   }
 
-  // Main authenticated layout
+  // Get current page metadata
+  const pageMeta = PAGE_META[currentPage];
+
+  // Main authenticated layout with sidebar
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Sticky Navigation Bar */}
-      <div className="sticky top-0 z-50 bg-white border-b">
-        <Navbar
-          onLogout={handleLogout}
+    <SidebarProvider defaultOpen={true}>
+      <div className="min-h-screen flex w-full bg-gray-50">
+        {/* Sidebar */}
+        <AppSidebar
           currentPage={currentPage}
           onPageChange={handlePageChange}
+          onLogout={handleLogout}
         />
-      </div>
 
-      {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {renderCurrentPage()}
-      </main>
-    </div>
+        {/* Main Content Area */}
+        <SidebarInset className="flex-1">
+          {/* Header with breadcrumb */}
+          <header className="sticky top-0 z-40 flex h-14 items-center gap-4 border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 px-4 lg:px-6">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="h-6" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <span className="text-gray-500 text-sm">{pageMeta.section}</span>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="font-medium">{pageMeta.title}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+            <div className="ml-auto hidden md:block">
+              <p className="text-sm text-gray-500">{pageMeta.description}</p>
+            </div>
+          </header>
+
+          {/* Page Content */}
+          <main className="flex-1 p-4 lg:p-6">
+            <div className="max-w-7xl mx-auto">
+              {renderCurrentPage()}
+            </div>
+          </main>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 };
 
