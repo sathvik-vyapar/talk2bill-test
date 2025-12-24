@@ -21,12 +21,19 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   Code, Play, Plus, Trash2, Copy, Check, ChevronDown, ChevronUp,
   FileText, Zap, Search, Filter, Download, Upload, RefreshCw,
   CheckCircle, XCircle, Clock, AlertCircle, Sparkles, Loader2,
   Eye, EyeOff, ChevronRight, Server, Send, Terminal, FileSpreadsheet, X, Info,
   Lightbulb, MessageCircle, Wand2, BookOpen, Mic, FileAudio, Volume2, Map, Target, Rocket,
-  TrendingUp, TrendingDown, BarChart3, Users, Star, LogOut, Activity
+  TrendingUp, TrendingDown, BarChart3, Users, Star, LogOut, Activity,
+  MoreHorizontal, FlaskConical, TestTube, Gauge, Calendar
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { testCasesData, TestCase } from '@/data/testCasesData';
@@ -973,7 +980,8 @@ const HighlightedPrompt = ({ text }: { text: string }) => {
 };
 
 const Product = () => {
-  const [activeTab, setActiveTab] = useState('prompts');
+  // Default to 'testcases' as it's a primary tab (most frequently used)
+  const [activeTab, setActiveTab] = useState('testcases');
   const [selectedPrompt, setSelectedPrompt] = useState<string | null>('intentClassification');
   const [copiedPrompt, setCopiedPrompt] = useState<string | null>(null);
 
@@ -1791,18 +1799,86 @@ const Product = () => {
         <p className="text-gray-600">System prompts and test case management for VAANI</p>
       </div>
 
-      {/* Tabs */}
+      {/* Tabs - Prioritized with "More" dropdown for less-used tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="flex flex-wrap justify-start gap-1 h-auto p-1 bg-muted/50 md:grid md:w-full md:grid-cols-8">
-          <TabsTrigger value="strategy" className="text-xs sm:text-sm">Strategy</TabsTrigger>
-          <TabsTrigger value="prompts" className="text-xs sm:text-sm">Prompts</TabsTrigger>
-          <TabsTrigger value="proposed-prompts" className="text-xs sm:text-sm">Proposed</TabsTrigger>
-          <TabsTrigger value="testcases" className="text-xs sm:text-sm">Test Cases</TabsTrigger>
-          <TabsTrigger value="api-testing" className="text-xs sm:text-sm">API Testing</TabsTrigger>
-          <TabsTrigger value="metrics" className="text-xs sm:text-sm">Metrics</TabsTrigger>
-          <TabsTrigger value="roadmap" className="text-xs sm:text-sm">Roadmap</TabsTrigger>
-          <TabsTrigger value="events" className="text-xs sm:text-sm">Events</TabsTrigger>
-        </TabsList>
+        <div className="flex flex-wrap items-center gap-1 p-1 bg-muted/50 rounded-lg">
+          {/* Primary Tabs - Most frequently used */}
+          <TabsList className="h-auto bg-transparent p-0 gap-1">
+            <TabsTrigger value="testcases" className="text-xs sm:text-sm data-[state=active]:bg-background">
+              <TestTube className="w-3.5 h-3.5 mr-1.5 hidden sm:inline" />
+              Test Cases
+            </TabsTrigger>
+            <TabsTrigger value="api-testing" className="text-xs sm:text-sm data-[state=active]:bg-background">
+              <Server className="w-3.5 h-3.5 mr-1.5 hidden sm:inline" />
+              API Testing
+            </TabsTrigger>
+            <TabsTrigger value="metrics" className="text-xs sm:text-sm data-[state=active]:bg-background">
+              <Gauge className="w-3.5 h-3.5 mr-1.5 hidden sm:inline" />
+              Metrics
+            </TabsTrigger>
+            <TabsTrigger value="events" className="text-xs sm:text-sm data-[state=active]:bg-background">
+              <Activity className="w-3.5 h-3.5 mr-1.5 hidden sm:inline" />
+              Events
+            </TabsTrigger>
+          </TabsList>
+
+          {/* More Dropdown - Less frequently used tabs */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant={['strategy', 'prompts', 'proposed-prompts', 'roadmap'].includes(activeTab) ? 'secondary' : 'ghost'}
+                size="sm"
+                className={`text-xs sm:text-sm h-8 px-3 ${
+                  ['strategy', 'prompts', 'proposed-prompts', 'roadmap'].includes(activeTab)
+                    ? 'bg-background shadow-sm'
+                    : ''
+                }`}
+              >
+                <MoreHorizontal className="w-3.5 h-3.5 mr-1.5" />
+                {activeTab === 'strategy' && 'Strategy'}
+                {activeTab === 'prompts' && 'Prompts'}
+                {activeTab === 'proposed-prompts' && 'Proposed'}
+                {activeTab === 'roadmap' && 'Roadmap'}
+                {!['strategy', 'prompts', 'proposed-prompts', 'roadmap'].includes(activeTab) && 'More'}
+                <ChevronDown className="w-3 h-3 ml-1" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem
+                onClick={() => setActiveTab('strategy')}
+                className={activeTab === 'strategy' ? 'bg-muted' : ''}
+              >
+                <Target className="w-4 h-4 mr-2" />
+                Strategy
+                {activeTab === 'strategy' && <Check className="w-4 h-4 ml-auto" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setActiveTab('prompts')}
+                className={activeTab === 'prompts' ? 'bg-muted' : ''}
+              >
+                <Code className="w-4 h-4 mr-2" />
+                Prompts
+                {activeTab === 'prompts' && <Check className="w-4 h-4 ml-auto" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setActiveTab('proposed-prompts')}
+                className={activeTab === 'proposed-prompts' ? 'bg-muted' : ''}
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Proposed Prompts
+                {activeTab === 'proposed-prompts' && <Check className="w-4 h-4 ml-auto" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setActiveTab('roadmap')}
+                className={activeTab === 'roadmap' ? 'bg-muted' : ''}
+              >
+                <Map className="w-4 h-4 mr-2" />
+                Roadmap
+                {activeTab === 'roadmap' && <Check className="w-4 h-4 ml-auto" />}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
         {/* Strategy Tab */}
         <TabsContent value="strategy" className="space-y-6">
