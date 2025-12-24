@@ -3625,626 +3625,607 @@ const Product = () => {
                   <BarChart3 className="w-8 h-8 text-blue-600" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">VAANI Metrics Dashboard</h2>
-                  <p className="text-gray-600 mt-1">Performance analytics from Mixpanel (Nov 22 - Dec 22, 2024)</p>
-                  <div className="flex gap-2 mt-3">
-                    <Badge className="bg-blue-100 text-blue-800">30-Day Data</Badge>
-                    <Badge className="bg-green-100 text-green-800">1,092 Users</Badge>
-                    <Badge className="bg-purple-100 text-purple-800">1,487 Expenses</Badge>
+                  <h2 className="text-xl font-bold text-gray-900">VAANI Mixpanel Metrics Guide</h2>
+                  <p className="text-gray-600 mt-1">Comprehensive metrics dashboard powered by 27 events and 60+ properties</p>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    <Badge className="bg-blue-100 text-blue-800">6 Metric Categories</Badge>
+                    <Badge className="bg-green-100 text-green-800">25+ Key Metrics</Badge>
+                    <Badge className="bg-purple-100 text-purple-800">Multi-Transaction Support</Badge>
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Key Metrics at a Glance */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="border-red-200">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">Success Rate</p>
-                    <p className="text-2xl font-bold text-red-600">9.42%</p>
-                  </div>
-                  <TrendingDown className="w-8 h-8 text-red-400" />
-                </div>
-                <p className="text-xs text-red-500 mt-1">Below benchmark</p>
-              </CardContent>
-            </Card>
-            <Card className="border-blue-200">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">Unique Users</p>
-                    <p className="text-2xl font-bold text-blue-600">1,092</p>
-                  </div>
-                  <Users className="w-8 h-8 text-blue-400" />
-                </div>
-                <p className="text-xs text-blue-500 mt-1">30-day period</p>
-              </CardContent>
-            </Card>
-            <Card className="border-yellow-200">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">D1 Retention</p>
-                    <p className="text-2xl font-bold text-yellow-600">~15%</p>
-                  </div>
-                  <TrendingDown className="w-8 h-8 text-yellow-400" />
-                </div>
-                <p className="text-xs text-yellow-600 mt-1">Benchmark: 40%</p>
-              </CardContent>
-            </Card>
-            <Card className="border-green-200">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">5★ Rating</p>
-                    <p className="text-2xl font-bold text-green-600">62.9%</p>
-                  </div>
-                  <Star className="w-8 h-8 text-green-400" />
-                </div>
-                <p className="text-xs text-green-500 mt-1">22 of 35 ratings</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Conversion Funnels */}
+          {/* 1. Core KPIs */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Activity className="w-5 h-5 text-blue-500" />
-                Conversion Funnels
+                <Target className="w-5 h-5 text-blue-600" />
+                1. Core KPIs (Key Performance Indicators)
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* 4-Step Funnel */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-medium text-gray-900">Central Funnel (4-Step)</h4>
-                    <Badge className="bg-red-100 text-red-800">9.42% Overall</Badge>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Success Rate */}
+                <div className="border rounded-lg p-4 bg-green-50/50">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-gray-900">Success Rate</h4>
+                    <Badge className="bg-green-600">Primary</Badge>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <div className="w-20 text-sm text-gray-600">Start</div>
-                      <div className="flex-1 bg-gray-200 rounded-full h-6 overflow-hidden">
-                        <div className="bg-blue-500 h-full rounded-full flex items-center justify-end pr-2" style={{width: '100%'}}>
-                          <span className="text-xs text-white font-medium">11,000</span>
-                        </div>
-                      </div>
-                      <span className="text-xs text-gray-500 w-14">100%</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-20 text-sm text-gray-600">Recording</div>
-                      <div className="flex-1 bg-gray-200 rounded-full h-6 overflow-hidden">
-                        <div className="bg-blue-500 h-full rounded-full flex items-center justify-end pr-2" style={{width: '49%'}}>
-                          <span className="text-xs text-white font-medium">5,462</span>
-                        </div>
-                      </div>
-                      <span className="text-xs text-red-500 w-14">-51%</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-20 text-sm text-gray-600">Processed</div>
-                      <div className="flex-1 bg-gray-200 rounded-full h-6 overflow-hidden">
-                        <div className="bg-blue-500 h-full rounded-full flex items-center justify-end pr-2" style={{width: '42%'}}>
-                          <span className="text-xs text-white font-medium">4,673</span>
-                        </div>
-                      </div>
-                      <span className="text-xs text-gray-500 w-14">-14%</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-20 text-sm text-gray-600">Saved</div>
-                      <div className="flex-1 bg-gray-200 rounded-full h-6 overflow-hidden">
-                        <div className="bg-green-500 h-full rounded-full flex items-center justify-end pr-2" style={{width: '9.4%'}}>
-                          <span className="text-xs text-white font-medium">1,037</span>
-                        </div>
-                      </div>
-                      <span className="text-xs text-red-500 w-14">-78%</span>
-                    </div>
+                  <p className="text-sm text-gray-600 mb-3">% of sessions that result in saved transaction</p>
+                  <div className="bg-white p-2 rounded border text-xs font-mono mb-2">
+                    <span className="text-green-600">VN_transaction_saved</span> / <span className="text-blue-600">VN_session_started</span> × 100
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    <span className="font-medium">Segment by:</span> transaction_type, source
                   </div>
                 </div>
 
-                {/* Drop-off Analysis */}
-                <div className="space-y-4">
-                  <h4 className="font-medium text-gray-900">Drop-off Points</h4>
-                  <div className="space-y-3">
-                    <div className="p-3 bg-red-50 rounded-lg border border-red-200">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-red-800">Start → Recording Done</span>
-                        <Badge className="bg-red-600">51% DROP</Badge>
-                      </div>
-                      <p className="text-xs text-red-600 mt-1">Users open VAANI but don't complete recording</p>
-                    </div>
-                    <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-green-800">Recording → Processed</span>
-                        <Badge className="bg-green-600">14% drop</Badge>
-                      </div>
-                      <p className="text-xs text-green-600 mt-1">Good retention at this step</p>
-                    </div>
-                    <div className="p-3 bg-red-50 rounded-lg border border-red-200">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-red-800">Processed → Saved</span>
-                        <Badge className="bg-red-600">78% DROP</Badge>
-                      </div>
-                      <p className="text-xs text-red-600 mt-1">Voice is processed but expense not saved</p>
-                    </div>
+                {/* Completion Rate */}
+                <div className="border rounded-lg p-4 bg-blue-50/50">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-gray-900">Completion Rate</h4>
+                    <Badge className="bg-blue-600">Primary</Badge>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-3">% of recordings that get fully processed</p>
+                  <div className="bg-white p-2 rounded border text-xs font-mono mb-2">
+                    <span className="text-purple-600">VN_ai_data_received</span> / <span className="text-green-600">VN_recording_completed</span> × 100
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    <span className="font-medium">Segment by:</span> transaction_type, language_detected
+                  </div>
+                </div>
+
+                {/* Error Rate */}
+                <div className="border rounded-lg p-4 bg-red-50/50">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-gray-900">Error Rate</h4>
+                    <Badge className="bg-red-600">Primary</Badge>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-3">% of sessions with API or client errors</p>
+                  <div className="bg-white p-2 rounded border text-xs font-mono mb-2">
+                    (<span className="text-red-600">VN_api_error</span> + <span className="text-orange-600">VN_error_occurred</span>) / <span className="text-blue-600">VN_session_started</span> × 100
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    <span className="font-medium">Breakdown:</span> error_type
+                  </div>
+                </div>
+
+                {/* Avg Time to Save */}
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-gray-900">Avg Time to Save</h4>
+                    <Badge variant="outline">Secondary</Badge>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-3">Average seconds from session start to save</p>
+                  <div className="bg-white p-2 rounded border text-xs font-mono mb-2">
+                    AVG(<span className="text-green-600">VN_transaction_saved</span>.time_to_create_invoice)
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    <span className="font-medium">Segment by:</span> transaction_type
+                  </div>
+                </div>
+
+                {/* User Satisfaction */}
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-gray-900">User Satisfaction (NPS)</h4>
+                    <Badge variant="outline">Secondary</Badge>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-3">5-star rating distribution</p>
+                  <div className="bg-white p-2 rounded border text-xs font-mono mb-2">
+                    <span className="text-purple-600">VN_feedback</span> GROUP BY stars
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    <span className="font-medium">Properties:</span> stars (1-5), features
+                  </div>
+                </div>
+
+                {/* Retention */}
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-gray-900">D1/D7/D30 Retention</h4>
+                    <Badge variant="outline">Secondary</Badge>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-3">Users returning after first use</p>
+                  <div className="bg-white p-2 rounded border text-xs font-mono mb-2">
+                    Mixpanel Retention: <span className="text-blue-600">VN_session_started</span> → <span className="text-blue-600">VN_session_started</span>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    <span className="font-medium">Cohort:</span> First session date
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Elaborated Funnel Analysis */}
+          {/* 2. Funnel Metrics */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Filter className="w-5 h-5 text-purple-500" />
-                Detailed Funnel Breakdown
+                <Filter className="w-5 h-5 text-purple-600" />
+                2. Funnel Metrics
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Audio Submission Funnel */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <Mic className="w-5 h-5 text-blue-500" />
-                    <h4 className="font-medium text-gray-900">Audio Submission</h4>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-blue-800">VAANI Opened</span>
-                        <span className="font-bold text-blue-600">11,000</span>
-                      </div>
-                      <div className="w-full bg-blue-200 rounded-full h-2 mt-2">
-                        <div className="bg-blue-500 h-full rounded-full" style={{width: '100%'}}></div>
-                      </div>
-                    </div>
-                    <div className="flex justify-center">
-                      <ChevronDown className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-green-800">Audio Submitted</span>
-                        <span className="font-bold text-green-600">5,462</span>
-                      </div>
-                      <div className="w-full bg-green-200 rounded-full h-2 mt-2">
-                        <div className="bg-green-500 h-full rounded-full" style={{width: '49.7%'}}></div>
-                      </div>
-                      <p className="text-xs text-green-600 mt-1">49.7% submission rate</p>
-                    </div>
-                    <div className="flex justify-center">
-                      <ChevronDown className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <div className="p-3 bg-purple-50 rounded-lg border border-purple-200">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-purple-800">Successfully Transcribed</span>
-                        <span className="font-bold text-purple-600">5,047</span>
-                      </div>
-                      <div className="w-full bg-purple-200 rounded-full h-2 mt-2">
-                        <div className="bg-purple-500 h-full rounded-full" style={{width: '92.4%'}}></div>
-                      </div>
-                      <p className="text-xs text-purple-600 mt-1">92.4% STT success</p>
-                    </div>
-                  </div>
-                  <div className="p-2 bg-red-50 rounded border border-red-200">
-                    <p className="text-xs text-red-700">
-                      <strong>Issue:</strong> 50% drop at audio submission - users don't complete recording
-                    </p>
-                  </div>
-                </div>
-
-                {/* Expense Quality Funnel */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <h4 className="font-medium text-gray-900">Expense Meaningfulness</h4>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-blue-800">Expenses Extracted</span>
-                        <span className="font-bold text-blue-600">4,673</span>
-                      </div>
-                      <div className="w-full bg-blue-200 rounded-full h-2 mt-2">
-                        <div className="bg-blue-500 h-full rounded-full" style={{width: '100%'}}></div>
-                      </div>
-                    </div>
-                    <div className="flex justify-center">
-                      <ChevronDown className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-yellow-800">Valid Item + Amount</span>
-                        <span className="font-bold text-yellow-600">2,850</span>
-                      </div>
-                      <div className="w-full bg-yellow-200 rounded-full h-2 mt-2">
-                        <div className="bg-yellow-500 h-full rounded-full" style={{width: '61%'}}></div>
-                      </div>
-                      <p className="text-xs text-yellow-600 mt-1">61% have complete data</p>
-                    </div>
-                    <div className="flex justify-center">
-                      <ChevronDown className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-green-800">Actually Saved</span>
-                        <span className="font-bold text-green-600">1,037</span>
-                      </div>
-                      <div className="w-full bg-green-200 rounded-full h-2 mt-2">
-                        <div className="bg-green-500 h-full rounded-full" style={{width: '36.4%'}}></div>
-                      </div>
-                      <p className="text-xs text-green-600 mt-1">36.4% of valid expenses saved</p>
-                    </div>
-                  </div>
-                  <div className="p-2 bg-yellow-50 rounded border border-yellow-200">
-                    <p className="text-xs text-yellow-700">
-                      <strong>Issue:</strong> 39% extractions lack item/amount - need better prompting
-                    </p>
-                  </div>
-                </div>
-
-                {/* Single vs Multi-Item */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-orange-500" />
-                    <h4 className="font-medium text-gray-900">Item Composition</h4>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-800">Total Saved Expenses</span>
-                        <span className="font-bold text-gray-600">1,037</span>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="p-3 bg-blue-50 rounded-lg border border-blue-200 text-center">
-                        <div className="text-2xl font-bold text-blue-600">78%</div>
-                        <div className="text-sm text-blue-800">Single Item</div>
-                        <div className="text-xs text-blue-600 mt-1">~809 expenses</div>
-                      </div>
-                      <div className="p-3 bg-purple-50 rounded-lg border border-purple-200 text-center">
-                        <div className="text-2xl font-bold text-purple-600">22%</div>
-                        <div className="text-sm text-purple-800">Multi-Item</div>
-                        <div className="text-xs text-purple-600 mt-1">~228 expenses</div>
-                      </div>
-                    </div>
-                    <div className="p-3 bg-orange-50 rounded-lg border border-orange-200">
-                      <h5 className="text-sm font-medium text-orange-800 mb-2">Multi-Item Breakdown:</h5>
-                      <div className="space-y-1 text-xs text-orange-700">
-                        <div className="flex justify-between">
-                          <span>2 items</span>
-                          <span className="font-medium">14% (~145)</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>3 items</span>
-                          <span className="font-medium">5% (~52)</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>4+ items</span>
-                          <span className="font-medium">3% (~31)</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-2 bg-blue-50 rounded border border-blue-200">
-                    <p className="text-xs text-blue-700">
-                      <strong>Insight:</strong> Most users speak single items - optimize for this pattern
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Summary Stats */}
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg border">
-                <h4 className="font-medium text-gray-900 mb-3">Funnel Summary</h4>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
-                  <div>
-                    <div className="text-lg font-bold text-blue-600">49.7%</div>
-                    <div className="text-xs text-gray-500">Audio Submit Rate</div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-purple-600">92.4%</div>
-                    <div className="text-xs text-gray-500">STT Success</div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-yellow-600">61%</div>
-                    <div className="text-xs text-gray-500">Meaningful Data</div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-green-600">36.4%</div>
-                    <div className="text-xs text-gray-500">Save Rate</div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-orange-600">78%</div>
-                    <div className="text-xs text-gray-500">Single-Item</div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Retention & Exit Analysis */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Retention Curve */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <TrendingDown className="w-5 h-5 text-red-500" />
-                  Retention Curve (30-Day)
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+            <CardContent className="space-y-6">
+              {/* Main Funnel */}
+              <div className="bg-purple-50/50 p-4 rounded-lg border border-purple-200">
+                <h4 className="font-semibold text-purple-900 mb-4">Main Conversion Funnel</h4>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
-                    <span className="w-16 text-sm text-gray-600">Day 1</span>
-                    <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
-                      <div className="bg-yellow-500 h-full rounded-full" style={{width: '15%'}}></div>
+                    <div className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center text-sm font-bold">1</div>
+                    <div className="flex-1 bg-white p-3 rounded border">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-sm text-purple-600">VN_session_started</span>
+                        <span className="text-xs text-gray-500">Session begins</span>
+                      </div>
                     </div>
-                    <span className="text-sm font-medium w-12">~15%</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="w-16 text-sm text-gray-600">Day 2</span>
-                    <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
-                      <div className="bg-orange-500 h-full rounded-full" style={{width: '3%'}}></div>
+                    <div className="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center text-sm font-bold">2</div>
+                    <div className="flex-1 bg-white p-3 rounded border">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-sm text-green-600">VN_recording_completed</span>
+                        <span className="text-xs text-gray-500">User finishes speaking</span>
+                      </div>
                     </div>
-                    <span className="text-sm font-medium w-12">~3%</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="w-16 text-sm text-gray-600">Day 5</span>
-                    <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
-                      <div className="bg-red-500 h-full rounded-full" style={{width: '2%'}}></div>
+                    <div className="w-8 h-8 rounded-full bg-purple-400 text-white flex items-center justify-center text-sm font-bold">3</div>
+                    <div className="flex-1 bg-white p-3 rounded border">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-sm text-blue-600">VN_ai_data_received</span>
+                        <span className="text-xs text-gray-500">AI extracts data</span>
+                      </div>
                     </div>
-                    <span className="text-sm font-medium w-12">~2%</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="w-16 text-sm text-gray-600">Day 30</span>
-                    <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
-                      <div className="bg-red-600 h-full rounded-full" style={{width: '1%'}}></div>
+                    <div className="w-8 h-8 rounded-full bg-purple-300 text-white flex items-center justify-center text-sm font-bold">4</div>
+                    <div className="flex-1 bg-white p-3 rounded border">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-sm text-orange-600">VN_transaction_review_shown</span>
+                        <span className="text-xs text-gray-500">Review screen displayed</span>
+                      </div>
                     </div>
-                    <span className="text-sm font-medium w-12">~1%</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">5</div>
+                    <div className="flex-1 bg-white p-3 rounded border">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-sm text-green-600">VN_transaction_saved</span>
+                        <span className="text-xs text-gray-500">Transaction created</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="mt-4 p-3 bg-red-50 rounded-lg border border-red-200">
-                  <p className="text-xs text-red-700">
-                    <strong>Gap:</strong> VAANI retention is 4-10x lower than industry benchmark (40% D1, 20% D7, 10% D30)
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
 
-            {/* Exit Reasons */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <LogOut className="w-5 h-5 text-orange-500" />
-                  Exit Reasons (Last 7 Days)
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                    <span className="text-sm">Others</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 bg-gray-200 rounded-full h-3">
-                        <div className="bg-gray-500 h-full rounded-full" style={{width: '45%'}}></div>
-                      </div>
-                      <span className="text-sm font-medium w-16 text-right">45.2%</span>
+              {/* Alternative Paths */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-red-50/50 p-4 rounded-lg border border-red-200">
+                  <h4 className="font-semibold text-red-900 mb-3">Drop-off Analysis</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-red-600">VN_transaction_cancelled</span>
+                      <span className="text-xs text-gray-500">User exits</span>
                     </div>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-red-50 rounded">
-                    <span className="text-sm text-red-700">Didn't understand me</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 bg-red-200 rounded-full h-3">
-                        <div className="bg-red-500 h-full rounded-full" style={{width: '35%'}}></div>
-                      </div>
-                      <span className="text-sm font-medium w-16 text-right">17.7%</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-yellow-50 rounded">
-                    <span className="text-sm text-yellow-700">Just testing</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 bg-yellow-200 rounded-full h-3">
-                        <div className="bg-yellow-500 h-full rounded-full" style={{width: '30%'}}></div>
-                      </div>
-                      <span className="text-sm font-medium w-16 text-right">14.9%</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-orange-50 rounded">
-                    <span className="text-sm text-orange-700">Too slow</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 bg-orange-200 rounded-full h-3">
-                        <div className="bg-orange-500 h-full rounded-full" style={{width: '10%'}}></div>
-                      </div>
-                      <span className="text-sm font-medium w-16 text-right">5.1%</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
-                    <span className="text-sm text-blue-700">Made a mistake</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 bg-blue-200 rounded-full h-3">
-                        <div className="bg-blue-500 h-full rounded-full" style={{width: '7%'}}></div>
-                      </div>
-                      <span className="text-sm font-medium w-16 text-right">3.3%</span>
+                    <p className="text-xs text-gray-600 mt-2">
+                      <span className="font-medium">Key properties:</span> cancel_stage, had_data, exit_reason
+                    </p>
+                    <div className="bg-white p-2 rounded border text-xs mt-2">
+                      <span className="font-medium">Segment by cancel_stage:</span><br/>
+                      • recording - Left during recording<br/>
+                      • processing - Left while AI processing<br/>
+                      • review - Left on review screen<br/>
+                      • editing - Left while editing
                     </div>
                   </div>
                 </div>
-                <div className="mt-3 text-xs text-gray-500">
-                  Total: 2,389 exits from 2,083 unique users (341/day avg)
-                </div>
-              </CardContent>
-            </Card>
-          </div>
 
-          {/* User Feedback */}
+                <div className="bg-orange-50/50 p-4 rounded-lg border border-orange-200">
+                  <h4 className="font-semibold text-orange-900 mb-3">Error Paths</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-red-600">VN_api_error</span>
+                      <span className="text-xs text-gray-500">Backend failures</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-orange-600">VN_error_occurred</span>
+                      <span className="text-xs text-gray-500">Client-side errors</span>
+                    </div>
+                    <div className="bg-white p-2 rounded border text-xs mt-2">
+                      <span className="font-medium">Error types:</span><br/>
+                      • server_error, timeout, upload_failed<br/>
+                      • stt_failed, ai_extraction_failed<br/>
+                      • permission_denied, mic_not_available
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 3. AI Accuracy Metrics */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-yellow-600" />
+                3. AI Accuracy Metrics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600 mb-4">Track how often users edit AI-extracted data to measure accuracy</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Field Edit Rate */}
+                <div className="border rounded-lg p-4 bg-yellow-50/50">
+                  <h4 className="font-semibold text-gray-900 mb-2">Overall Edit Rate</h4>
+                  <p className="text-sm text-gray-600 mb-2">% of transactions with any field edited</p>
+                  <div className="bg-white p-2 rounded border text-xs font-mono">
+                    <span className="text-orange-600">VN_field_edited</span> unique sessions / <span className="text-green-600">VN_transaction_saved</span>
+                  </div>
+                </div>
+
+                {/* Category Accuracy */}
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Category Accuracy</h4>
+                  <p className="text-sm text-gray-600 mb-2">% where AI category = final category</p>
+                  <div className="bg-white p-2 rounded border text-xs font-mono">
+                    <span className="text-green-600">VN_transaction_saved</span> WHERE category_edited = false
+                  </div>
+                </div>
+
+                {/* Amount Accuracy */}
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Amount Accuracy</h4>
+                  <p className="text-sm text-gray-600 mb-2">% where AI amount = final amount</p>
+                  <div className="bg-white p-2 rounded border text-xs font-mono">
+                    <span className="text-green-600">VN_transaction_saved</span> WHERE amount_edited = false
+                  </div>
+                </div>
+
+                {/* Party Name Accuracy */}
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Party Name Accuracy</h4>
+                  <p className="text-sm text-gray-600 mb-2">For Payment In/Out - party matching</p>
+                  <div className="bg-white p-2 rounded border text-xs font-mono">
+                    <span className="text-green-600">VN_transaction_saved</span> WHERE party_edited = false
+                  </div>
+                </div>
+
+                {/* Item Count Accuracy */}
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Item Count Accuracy</h4>
+                  <p className="text-sm text-gray-600 mb-2">vn_item_count vs final_item_count match</p>
+                  <div className="bg-white p-2 rounded border text-xs font-mono">
+                    <span className="text-green-600">VN_transaction_saved</span> WHERE items_edited = false
+                  </div>
+                </div>
+
+                {/* Field-level Edits */}
+                <div className="border rounded-lg p-4 bg-blue-50/50">
+                  <h4 className="font-semibold text-gray-900 mb-2">Field Edit Breakdown</h4>
+                  <p className="text-sm text-gray-600 mb-2">Which fields are edited most</p>
+                  <div className="bg-white p-2 rounded border text-xs font-mono">
+                    <span className="text-orange-600">VN_field_edited</span> GROUP BY field_name
+                  </div>
+                  <div className="text-xs text-gray-500 mt-2">
+                    Fields: amount, item_name, category, party_name, payment_type
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 4. Engagement Metrics */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="w-5 h-5 text-green-600" />
+                4. Engagement Metrics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Recording Duration */}
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Avg Recording Duration</h4>
+                  <div className="bg-gray-50 p-2 rounded border text-xs font-mono">
+                    AVG(<span className="text-green-600">VN_recording_completed</span>.recording_duration_ms)
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">Typical: 5-15 seconds</p>
+                </div>
+
+                {/* Conversation Turns */}
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Avg Conversation Turns</h4>
+                  <div className="bg-gray-50 p-2 rounded border text-xs font-mono">
+                    AVG(<span className="text-green-600">VN_transaction_saved</span>.user_chats_count)
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">Lower = better AI understanding</p>
+                </div>
+
+                {/* Time to Review */}
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Time to Review Screen</h4>
+                  <div className="bg-gray-50 p-2 rounded border text-xs font-mono">
+                    AVG(<span className="text-orange-600">VN_transaction_review_shown</span>.time_to_review_ms)
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">Target: {"<"}3 seconds</p>
+                </div>
+
+                {/* Session Duration */}
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Avg Session Duration</h4>
+                  <div className="bg-gray-50 p-2 rounded border text-xs font-mono">
+                    AVG(<span className="text-blue-600">VN_session_ended</span>.time_spent_seconds)
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">Successful sessions only</p>
+                </div>
+              </div>
+
+              {/* Suggestion Usage */}
+              <div className="mt-6 bg-gray-50 p-4 rounded-lg border">
+                <h4 className="font-semibold text-gray-900 mb-3">Suggestion Adoption</h4>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                  <div className="bg-white p-3 rounded border">
+                    <span className="font-mono text-xs text-purple-600">VN_category_suggestion_selected</span>
+                    <p className="text-xs text-gray-500 mt-1">Category picked from list</p>
+                  </div>
+                  <div className="bg-white p-3 rounded border">
+                    <span className="font-mono text-xs text-purple-600">VN_item_suggestion_selected</span>
+                    <p className="text-xs text-gray-500 mt-1">Item name from suggestions</p>
+                  </div>
+                  <div className="bg-white p-3 rounded border">
+                    <span className="font-mono text-xs text-purple-600">VN_party_suggestion_selected</span>
+                    <p className="text-xs text-gray-500 mt-1">Party from existing contacts</p>
+                  </div>
+                  <div className="bg-white p-3 rounded border">
+                    <span className="font-mono text-xs text-purple-600">VN_payment_type_suggestion_selected</span>
+                    <p className="text-xs text-gray-500 mt-1">Payment method selected</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 5. User Feedback Metrics */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Star className="w-5 h-5 text-yellow-500" />
-                User Feedback Scores (Last 30 Days)
+                5. User Feedback Metrics
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Rating Distribution */}
-                <div className="space-y-3">
-                  <h4 className="font-medium text-gray-900">Rating Distribution</h4>
+                <div className="bg-yellow-50/50 p-4 rounded-lg border border-yellow-200">
+                  <h4 className="font-semibold text-gray-900 mb-3">Star Rating Distribution</h4>
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="w-16 text-sm">5 Stars</span>
-                      <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
-                        <div className="bg-green-500 h-full rounded-full" style={{width: '62.9%'}}></div>
-                      </div>
-                      <span className="text-sm font-medium w-12">62.9%</span>
+                    <div className="bg-white p-2 rounded border text-xs font-mono">
+                      <span className="text-yellow-600">VN_feedback</span> GROUP BY stars
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-16 text-sm">3 Stars</span>
-                      <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
-                        <div className="bg-yellow-500 h-full rounded-full" style={{width: '17.1%'}}></div>
-                      </div>
-                      <span className="text-sm font-medium w-12">17.1%</span>
+                    <p className="text-xs text-gray-600">Properties: stars (1-5), features, transaction_saved</p>
+                  </div>
+                  <div className="mt-3 space-y-1">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="w-8">5★</span>
+                      <div className="flex-1 bg-green-200 rounded h-3"></div>
+                      <span className="text-xs text-gray-500">Promoters</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-16 text-sm">1 Star</span>
-                      <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
-                        <div className="bg-red-500 h-full rounded-full" style={{width: '11.4%'}}></div>
-                      </div>
-                      <span className="text-sm font-medium w-12">11.4%</span>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="w-8">4★</span>
+                      <div className="flex-1 bg-green-100 rounded h-3" style={{width: '70%'}}></div>
+                      <span className="text-xs text-gray-500">Promoters</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-16 text-sm">2 Stars</span>
-                      <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
-                        <div className="bg-orange-500 h-full rounded-full" style={{width: '5.7%'}}></div>
-                      </div>
-                      <span className="text-sm font-medium w-12">5.7%</span>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="w-8">3★</span>
+                      <div className="flex-1 bg-yellow-100 rounded h-3" style={{width: '30%'}}></div>
+                      <span className="text-xs text-gray-500">Passive</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-16 text-sm">4 Stars</span>
-                      <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
-                        <div className="bg-lime-500 h-full rounded-full" style={{width: '2.9%'}}></div>
-                      </div>
-                      <span className="text-sm font-medium w-12">2.9%</span>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="w-8">1-2★</span>
+                      <div className="flex-1 bg-red-100 rounded h-3" style={{width: '15%'}}></div>
+                      <span className="text-xs text-gray-500">Detractors</span>
                     </div>
                   </div>
                 </div>
 
-                {/* NPS Score */}
-                <div className="space-y-4">
-                  <h4 className="font-medium text-gray-900">Net Promoter Score (NPS)</h4>
-                  <div className="flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-5xl font-bold text-green-600">45.8</div>
-                      <p className="text-sm text-gray-500 mt-1">NPS Score (Decent)</p>
+                {/* Exit Reasons */}
+                <div className="bg-red-50/50 p-4 rounded-lg border border-red-200">
+                  <h4 className="font-semibold text-gray-900 mb-3">Exit Feedback Analysis</h4>
+                  <div className="space-y-2">
+                    <div className="bg-white p-2 rounded border text-xs font-mono">
+                      <span className="text-red-600">VN_exit_feedback</span> GROUP BY exit_reasons
+                    </div>
+                    <p className="text-xs text-gray-600">Why users leave without saving</p>
+                  </div>
+                  <div className="mt-3 text-sm space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span>Didn't understand</span>
+                      <Badge variant="outline" className="text-red-600">High Priority</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Too slow</span>
+                      <Badge variant="outline">Performance</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Wrong extraction</span>
+                      <Badge variant="outline" className="text-orange-600">AI Accuracy</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Just exploring</span>
+                      <Badge variant="outline" className="text-gray-500">Expected</Badge>
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="p-2 bg-green-50 rounded-lg">
-                      <div className="text-lg font-bold text-green-600">62.9%</div>
-                      <div className="text-xs text-green-700">Promoters</div>
-                    </div>
-                    <div className="p-2 bg-gray-50 rounded-lg">
-                      <div className="text-lg font-bold text-gray-600">20.0%</div>
-                      <div className="text-xs text-gray-700">Passives</div>
-                    </div>
-                    <div className="p-2 bg-red-50 rounded-lg">
-                      <div className="text-lg font-bold text-red-600">17.1%</div>
-                      <div className="text-xs text-red-700">Detractors</div>
-                    </div>
+                </div>
+              </div>
+
+              {/* Feature Requests */}
+              <div className="mt-4 bg-blue-50/50 p-4 rounded-lg border border-blue-200">
+                <h4 className="font-semibold text-gray-900 mb-2">Feature Feedback</h4>
+                <div className="bg-white p-2 rounded border text-xs font-mono">
+                  <span className="text-blue-600">VN_feature_feedback</span> - properties: features (comma-separated list)
+                </div>
+                <p className="text-xs text-gray-500 mt-2">Track which features users request most</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 6. Transaction Type Breakdown */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-indigo-600" />
+                6. Transaction Type Analysis
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600 mb-4">All metrics can be segmented by <code className="bg-gray-100 px-1 rounded">transaction_type</code> property</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div className="p-3 bg-blue-50 rounded-lg border border-blue-200 text-center">
+                  <p className="font-mono text-xs text-blue-600">expense</p>
+                  <p className="text-xs text-gray-500 mt-1">Live</p>
+                </div>
+                <div className="p-3 bg-green-50 rounded-lg border border-green-200 text-center">
+                  <p className="font-mono text-xs text-green-600">payment_in</p>
+                  <p className="text-xs text-gray-500 mt-1">Current Sprint</p>
+                </div>
+                <div className="p-3 bg-green-50 rounded-lg border border-green-200 text-center">
+                  <p className="font-mono text-xs text-green-600">payment_out</p>
+                  <p className="text-xs text-gray-500 mt-1">Current Sprint</p>
+                </div>
+                <div className="p-3 bg-purple-50 rounded-lg border border-purple-200 text-center">
+                  <p className="font-mono text-xs text-purple-600">sale_invoice</p>
+                  <p className="text-xs text-gray-500 mt-1">Next Sprint</p>
+                </div>
+                <div className="p-3 bg-purple-50 rounded-lg border border-purple-200 text-center">
+                  <p className="font-mono text-xs text-purple-600">sale_order</p>
+                  <p className="text-xs text-gray-500 mt-1">Next Sprint</p>
+                </div>
+                <div className="p-3 bg-purple-50 rounded-lg border border-purple-200 text-center">
+                  <p className="font-mono text-xs text-purple-600">delivery_challan</p>
+                  <p className="text-xs text-gray-500 mt-1">Next Sprint</p>
+                </div>
+              </div>
+
+              {/* Recommended Dashboards */}
+              <div className="mt-6">
+                <h4 className="font-semibold text-gray-900 mb-3">Recommended Mixpanel Dashboards</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-gray-50 p-4 rounded-lg border">
+                    <h5 className="font-medium text-gray-900 mb-2">Daily Operations Dashboard</h5>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• Sessions started (by transaction_type)</li>
+                      <li>• Success rate trend</li>
+                      <li>• Error rate by type</li>
+                      <li>• Avg time to save</li>
+                    </ul>
                   </div>
-                  <p className="text-xs text-gray-500 text-center">
-                    Only 35 feedback events from 1,092 users (3.2% response rate)
-                  </p>
+                  <div className="bg-gray-50 p-4 rounded-lg border">
+                    <h5 className="font-medium text-gray-900 mb-2">AI Quality Dashboard</h5>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• Field edit rates (by field_name)</li>
+                      <li>• Category/Amount/Party accuracy</li>
+                      <li>• Conversation turns distribution</li>
+                      <li>• Language accuracy (by language_detected)</li>
+                    </ul>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg border">
+                    <h5 className="font-medium text-gray-900 mb-2">User Experience Dashboard</h5>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• Main conversion funnel</li>
+                      <li>• Drop-off by cancel_stage</li>
+                      <li>• Rating distribution</li>
+                      <li>• Exit reasons breakdown</li>
+                    </ul>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg border">
+                    <h5 className="font-medium text-gray-900 mb-2">Performance Dashboard</h5>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• STT response time (VN_stt_received.time_taken_ms)</li>
+                      <li>• AI extraction time (VN_ai_data_received.time_taken_ms)</li>
+                      <li>• Upload success rate</li>
+                      <li>• Network quality (ping, download/upload)</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Missing Metrics */}
-          <Card className="border-yellow-200 bg-yellow-50">
+          {/* Quick Reference */}
+          <Card className="border-2 border-dashed border-gray-300">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-yellow-800">
-                <AlertCircle className="w-5 h-5" />
-                Missing Metrics (Need Data)
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5 text-gray-600" />
+                Quick Event Reference
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-white p-3 rounded-lg border border-yellow-200">
-                  <h4 className="font-medium text-yellow-900 mb-2 flex items-center gap-1">
-                    <Clock className="w-4 h-4" /> Performance
-                  </h4>
-                  <ul className="text-xs text-yellow-700 space-y-1">
-                    <li>Average Latency (E2E)</li>
-                    <li>P50, P95, P99 Latency</li>
-                    <li>Time to First Response</li>
-                  </ul>
-                </div>
-                <div className="bg-white p-3 rounded-lg border border-yellow-200">
-                  <h4 className="font-medium text-yellow-900 mb-2 flex items-center gap-1">
-                    <Target className="w-4 h-4" /> Accuracy
-                  </h4>
-                  <ul className="text-xs text-yellow-700 space-y-1">
-                    <li>Intent Detection Accuracy</li>
-                    <li>Extraction Accuracy</li>
-                    <li>Category Assignment</li>
-                  </ul>
-                </div>
-                <div className="bg-white p-3 rounded-lg border border-yellow-200">
-                  <h4 className="font-medium text-yellow-900 mb-2 flex items-center gap-1">
-                    <Zap className="w-4 h-4" /> Cost
-                  </h4>
-                  <ul className="text-xs text-yellow-700 space-y-1">
-                    <li>Cost per Transaction</li>
-                    <li>Monthly API Spend</li>
-                    <li>Cost per Success</li>
-                  </ul>
-                </div>
-                <div className="bg-white p-3 rounded-lg border border-yellow-200">
-                  <h4 className="font-medium text-yellow-900 mb-2 flex items-center gap-1">
-                    <Users className="w-4 h-4" /> Segmentation
-                  </h4>
-                  <ul className="text-xs text-yellow-700 space-y-1">
-                    <li>Success by Business Type</li>
-                    <li>Success by Language</li>
-                    <li>Success by Time of Day</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Critical Issues Summary */}
-          <Card className="border-red-200 bg-red-50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-red-800">
-                <XCircle className="w-5 h-5" />
-                Critical Issues Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-white p-4 rounded-lg border border-red-200">
-                  <div className="text-2xl font-bold text-red-600">9.42%</div>
-                  <div className="text-sm text-red-800 font-medium">Low Success Rate</div>
-                  <p className="text-xs text-red-600 mt-1">Only 1,037 expenses saved from 11,000 starts</p>
-                </div>
-                <div className="bg-white p-4 rounded-lg border border-red-200">
-                  <div className="text-2xl font-bold text-red-600">~2%</div>
-                  <div className="text-sm text-red-800 font-medium">Poor D5 Retention</div>
-                  <p className="text-xs text-red-600 mt-1">98% users don't return after Day 5</p>
-                </div>
-                <div className="bg-white p-4 rounded-lg border border-red-200">
-                  <div className="text-2xl font-bold text-red-600">341/day</div>
-                  <div className="text-sm text-red-800 font-medium">High Exit Rate</div>
-                  <p className="text-xs text-red-600 mt-1">2,389 exits in last 7 days</p>
-                </div>
-                <div className="bg-white p-4 rounded-lg border border-red-200">
-                  <div className="text-2xl font-bold text-red-600">422</div>
-                  <div className="text-sm text-red-800 font-medium">"Didn't Understand"</div>
-                  <p className="text-xs text-red-600 mt-1">Users report VAANI didn't understand them</p>
-                </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b bg-gray-50">
+                      <th className="text-left p-2 font-semibold">Event Name</th>
+                      <th className="text-left p-2 font-semibold">When Fired</th>
+                      <th className="text-left p-2 font-semibold">Key Properties</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    <tr>
+                      <td className="p-2 font-mono text-blue-600">VN_session_started</td>
+                      <td className="p-2">Session begins</td>
+                      <td className="p-2 text-xs">source, use_case_type, transaction_type</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 font-mono text-green-600">VN_recording_completed</td>
+                      <td className="p-2">User stops speaking</td>
+                      <td className="p-2 text-xs">recording_duration_ms, auto_stop, recording_number</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 font-mono text-purple-600">VN_stt_received</td>
+                      <td className="p-2">Transcription ready</td>
+                      <td className="p-2 text-xs">time_taken_ms, transcript_length, language_detected</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 font-mono text-purple-600">VN_ai_data_received</td>
+                      <td className="p-2">AI extraction complete</td>
+                      <td className="p-2 text-xs">time_taken_ms, has_missing_fields, fields_extracted_count</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 font-mono text-orange-600">VN_transaction_review_shown</td>
+                      <td className="p-2">Review screen appears</td>
+                      <td className="p-2 text-xs">time_to_review_ms, fields_shown, missing_fields</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 font-mono text-green-600">VN_transaction_saved</td>
+                      <td className="p-2">Transaction created</td>
+                      <td className="p-2 text-xs">transaction_type, time_to_create_invoice, *_edited flags</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 font-mono text-red-600">VN_transaction_cancelled</td>
+                      <td className="p-2">User exits without saving</td>
+                      <td className="p-2 text-xs">cancel_stage, had_data, exit_reason</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 font-mono text-orange-600">VN_field_edited</td>
+                      <td className="p-2">User edits any field</td>
+                      <td className="p-2 text-xs">field_name, field_old_value, field_new_value, edit_method</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 font-mono text-red-600">VN_api_error</td>
+                      <td className="p-2">Backend API fails</td>
+                      <td className="p-2 text-xs">error_type, api_endpoint, error_code, retry_count</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 font-mono text-yellow-600">VN_feedback</td>
+                      <td className="p-2">User submits rating</td>
+                      <td className="p-2 text-xs">stars, features, transaction_saved</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </CardContent>
           </Card>
