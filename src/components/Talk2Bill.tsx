@@ -41,6 +41,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import VoiceSampleSelector, { VoiceSample } from '@/components/VoiceSampleSelector';
+import { useToast } from '@/hooks/use-toast';
 
 // =============================================================================
 // TYPE DEFINITIONS
@@ -175,6 +176,12 @@ const getStatusColor = (status: JobStatus): string => {
 // =============================================================================
 
 const Talk2Bill: React.FC = () => {
+  // ---------------------------------------------------------------------------
+  // HOOKS
+  // ---------------------------------------------------------------------------
+
+  const { toast } = useToast();
+
   // ---------------------------------------------------------------------------
   // STATE
   // ---------------------------------------------------------------------------
@@ -861,8 +868,9 @@ const Talk2Bill: React.FC = () => {
         <RadioGroup
           value={transactionType.toString()}
           onValueChange={(value) => setTransactionType(Number(value) as TransactionType)}
-          className="flex items-center gap-4"
+          className="flex items-center gap-3"
         >
+          {/* Active Transaction Types */}
           <div className="flex items-center space-x-1.5">
             <RadioGroupItem value={TransactionType.EXPENSE.toString()} id="expense" />
             <Label htmlFor="expense" className="text-sm font-normal cursor-pointer">
@@ -882,6 +890,29 @@ const Talk2Bill: React.FC = () => {
             </Label>
           </div>
         </RadioGroup>
+
+        {/* Divider */}
+        <div className="h-4 w-px bg-gray-300" />
+
+        {/* WIP Transaction Types - Placeholder */}
+        <div className="flex items-center gap-3">
+          {['Sale Invoice', 'Sale Order', 'Delivery Challan'].map((type) => (
+            <button
+              key={type}
+              onClick={() => {
+                toast({
+                  title: "Work in Progress",
+                  description: `${type} support is coming soon. Currently only Expense, Payment In, and Payment Out are available.`,
+                  duration: 3000,
+                });
+              }}
+              className="flex items-center space-x-1.5 text-sm text-gray-400 hover:text-gray-500 transition-colors"
+            >
+              <div className="w-4 h-4 rounded-full border-2 border-gray-300 border-dashed" />
+              <span>{type}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/*
