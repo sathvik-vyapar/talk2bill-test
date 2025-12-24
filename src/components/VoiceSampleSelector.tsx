@@ -282,8 +282,8 @@ const VoiceSampleSelector: React.FC<VoiceSampleSelectorProps> = ({
    */
   const [audioAvailability, setAudioAvailability] = useState<Record<string, boolean>>({});
 
-  /** Whether the sample list is expanded (collapsible card) */
-  const [isExpanded, setIsExpanded] = useState(true);
+  /** Whether the sample list is expanded (collapsible card) - collapsed by default for minimal UI */
+  const [isExpanded, setIsExpanded] = useState(false);
 
   /**
    * Reference to the current Audio element for playback control.
@@ -489,28 +489,43 @@ const VoiceSampleSelector: React.FC<VoiceSampleSelectorProps> = ({
 
   return (
     <>
-      <Card className={className}>
-        <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-          <CardHeader className="pb-2">
-            <CollapsibleTrigger asChild>
-              <div className="flex items-center justify-between cursor-pointer hover:bg-gray-50 -mx-2 px-2 py-1 rounded transition-colors">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Volume2 className="w-4 h-4 text-blue-600" />
-                  Sample Voice Inputs
-                  <Badge variant="secondary" className="ml-2">
-                    {filteredSamples.length} available
-                  </Badge>
-                </CardTitle>
-                {isExpanded ? (
-                  <ChevronUp className="w-4 h-4 text-gray-500" />
-                ) : (
-                  <ChevronDown className="w-4 h-4 text-gray-500" />
-                )}
+      <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+        {/* Collapsed state: Minimal inline trigger */}
+        {!isExpanded ? (
+          <CollapsibleTrigger asChild>
+            <button
+              className={`w-full flex items-center justify-between px-4 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors text-sm ${className}`}
+              disabled={disabled}
+            >
+              <div className="flex items-center gap-2 text-gray-600">
+                <Volume2 className="w-4 h-4 text-blue-500" />
+                <span>{filteredSamples.length} sample voice inputs available</span>
               </div>
-            </CollapsibleTrigger>
-          </CardHeader>
+              <div className="flex items-center gap-2 text-blue-600">
+                <span className="text-xs">Browse samples</span>
+                <ChevronDown className="w-4 h-4" />
+              </div>
+            </button>
+          </CollapsibleTrigger>
+        ) : (
+          /* Expanded state: Full card with samples */
+          <Card className={className}>
+            <CardHeader className="pb-2">
+              <CollapsibleTrigger asChild>
+                <div className="flex items-center justify-between cursor-pointer hover:bg-gray-50 -mx-2 px-2 py-1 rounded transition-colors">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Volume2 className="w-4 h-4 text-blue-600" />
+                    Sample Voice Inputs
+                    <Badge variant="secondary" className="ml-2">
+                      {filteredSamples.length} available
+                    </Badge>
+                  </CardTitle>
+                  <ChevronUp className="w-4 h-4 text-gray-500" />
+                </div>
+              </CollapsibleTrigger>
+            </CardHeader>
 
-          <CollapsibleContent>
+            <CollapsibleContent>
             <CardContent className="pt-2">
               {filteredSamples.length === 0 ? (
                 <p className="text-gray-500 text-center py-4">
@@ -615,9 +630,10 @@ const VoiceSampleSelector: React.FC<VoiceSampleSelectorProps> = ({
                 </div>
               )}
             </CardContent>
-          </CollapsibleContent>
-        </Collapsible>
-      </Card>
+            </CollapsibleContent>
+          </Card>
+        )}
+      </Collapsible>
 
       {/* Audio Unavailable Dialog */}
       <Dialog open={showUnavailableDialog} onOpenChange={setShowUnavailableDialog}>
