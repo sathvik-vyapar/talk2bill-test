@@ -1793,15 +1793,15 @@ const Product = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-8">
-          <TabsTrigger value="strategy">Strategy</TabsTrigger>
-          <TabsTrigger value="prompts">Prompts</TabsTrigger>
-          <TabsTrigger value="proposed-prompts">Proposed</TabsTrigger>
-          <TabsTrigger value="testcases">Test Cases</TabsTrigger>
-          <TabsTrigger value="api-testing">API Testing</TabsTrigger>
-          <TabsTrigger value="metrics">Metrics</TabsTrigger>
-          <TabsTrigger value="roadmap">Roadmap</TabsTrigger>
-          <TabsTrigger value="events">Events</TabsTrigger>
+        <TabsList className="flex flex-wrap justify-start gap-1 h-auto p-1 bg-muted/50 md:grid md:w-full md:grid-cols-8">
+          <TabsTrigger value="strategy" className="text-xs sm:text-sm">Strategy</TabsTrigger>
+          <TabsTrigger value="prompts" className="text-xs sm:text-sm">Prompts</TabsTrigger>
+          <TabsTrigger value="proposed-prompts" className="text-xs sm:text-sm">Proposed</TabsTrigger>
+          <TabsTrigger value="testcases" className="text-xs sm:text-sm">Test Cases</TabsTrigger>
+          <TabsTrigger value="api-testing" className="text-xs sm:text-sm">API Testing</TabsTrigger>
+          <TabsTrigger value="metrics" className="text-xs sm:text-sm">Metrics</TabsTrigger>
+          <TabsTrigger value="roadmap" className="text-xs sm:text-sm">Roadmap</TabsTrigger>
+          <TabsTrigger value="events" className="text-xs sm:text-sm">Events</TabsTrigger>
         </TabsList>
 
         {/* Strategy Tab */}

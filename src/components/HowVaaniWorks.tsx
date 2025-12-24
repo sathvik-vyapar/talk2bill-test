@@ -291,22 +291,22 @@ const HowVaaniWorks: React.FC = () => {
 
       {/* Tabs Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-flex">
-          <TabsTrigger value="overview" className="flex items-center gap-2">
-            <Lightbulb className="w-4 h-4" />
-            <span className="hidden sm:inline">Overview</span>
+        <TabsList className="flex flex-wrap justify-start gap-1 h-auto p-1 bg-muted/50 sm:grid sm:w-full sm:grid-cols-4 lg:w-auto lg:inline-flex">
+          <TabsTrigger value="overview" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+            <Lightbulb className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden xs:inline sm:inline">Overview</span>
           </TabsTrigger>
-          <TabsTrigger value="desktop" className="flex items-center gap-2">
-            <Monitor className="w-4 h-4" />
-            <span className="hidden sm:inline">Desktop</span>
+          <TabsTrigger value="desktop" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+            <Monitor className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden xs:inline sm:inline">Desktop</span>
           </TabsTrigger>
-          <TabsTrigger value="mobile" className="flex items-center gap-2">
-            <Smartphone className="w-4 h-4" />
+          <TabsTrigger value="mobile" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+            <Smartphone className="w-3 h-3 sm:w-4 sm:h-4" />
             <span className="hidden sm:inline">Mobile</span>
           </TabsTrigger>
-          <TabsTrigger value="examples" className="flex items-center gap-2">
-            <Play className="w-4 h-4" />
-            <span className="hidden sm:inline">Examples</span>
+          <TabsTrigger value="examples" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+            <Play className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden xs:inline sm:inline">Examples</span>
           </TabsTrigger>
         </TabsList>
 

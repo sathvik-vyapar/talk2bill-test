@@ -134,10 +134,10 @@ const Metrics = () => {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview">API Usage Overview</TabsTrigger>
-          <TabsTrigger value="conversations">Conversation History</TabsTrigger>
-          <TabsTrigger value="analytics">Performance Analytics</TabsTrigger>
+        <TabsList className="flex flex-wrap justify-start gap-1 h-auto p-1 bg-muted/50 sm:grid sm:w-full sm:grid-cols-3">
+          <TabsTrigger value="overview" className="text-xs sm:text-sm">API Usage Overview</TabsTrigger>
+          <TabsTrigger value="conversations" className="text-xs sm:text-sm">Conversation History</TabsTrigger>
+          <TabsTrigger value="analytics" className="text-xs sm:text-sm">Performance Analytics</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">

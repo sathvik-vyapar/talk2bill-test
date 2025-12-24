@@ -846,14 +846,14 @@ const ProductionInsights = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-7">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="funnel">Funnel</TabsTrigger>
-          <TabsTrigger value="other-intent">Other Intent</TabsTrigger>
-          <TabsTrigger value="categories">Categories</TabsTrigger>
-          <TabsTrigger value="items">Top Items</TabsTrigger>
-          <TabsTrigger value="samples">Samples</TabsTrigger>
-          <TabsTrigger value="raw-data">Raw Data</TabsTrigger>
+        <TabsList className="flex flex-wrap justify-start gap-1 h-auto p-1 bg-muted/50 md:grid md:w-full md:grid-cols-7">
+          <TabsTrigger value="overview" className="text-xs sm:text-sm">Overview</TabsTrigger>
+          <TabsTrigger value="funnel" className="text-xs sm:text-sm">Funnel</TabsTrigger>
+          <TabsTrigger value="other-intent" className="text-xs sm:text-sm">Other Intent</TabsTrigger>
+          <TabsTrigger value="categories" className="text-xs sm:text-sm">Categories</TabsTrigger>
+          <TabsTrigger value="items" className="text-xs sm:text-sm">Top Items</TabsTrigger>
+          <TabsTrigger value="samples" className="text-xs sm:text-sm">Samples</TabsTrigger>
+          <TabsTrigger value="raw-data" className="text-xs sm:text-sm">Raw Data</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}

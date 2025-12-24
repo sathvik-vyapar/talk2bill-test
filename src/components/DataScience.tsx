@@ -436,10 +436,10 @@ const DataScience = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="how-it-works">How It Works</TabsTrigger>
-          <TabsTrigger value="evolution">Pipeline Evolution</TabsTrigger>
-          <TabsTrigger value="architecture">Old Architecture</TabsTrigger>
+        <TabsList className="flex flex-wrap justify-start gap-1 h-auto p-1 bg-muted/50 sm:grid sm:w-full sm:grid-cols-3">
+          <TabsTrigger value="how-it-works" className="text-xs sm:text-sm">How It Works</TabsTrigger>
+          <TabsTrigger value="evolution" className="text-xs sm:text-sm">Pipeline Evolution</TabsTrigger>
+          <TabsTrigger value="architecture" className="text-xs sm:text-sm">Old Architecture</TabsTrigger>
         </TabsList>
 
         {/* How It Works Tab */}
