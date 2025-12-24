@@ -1793,7 +1793,7 @@ const Product = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-7">
+        <TabsList className="grid w-full grid-cols-8">
           <TabsTrigger value="strategy">Strategy</TabsTrigger>
           <TabsTrigger value="prompts">Prompts</TabsTrigger>
           <TabsTrigger value="proposed-prompts">Proposed</TabsTrigger>
@@ -1801,6 +1801,7 @@ const Product = () => {
           <TabsTrigger value="api-testing">API Testing</TabsTrigger>
           <TabsTrigger value="metrics">Metrics</TabsTrigger>
           <TabsTrigger value="roadmap">Roadmap</TabsTrigger>
+          <TabsTrigger value="events">Events</TabsTrigger>
         </TabsList>
 
         {/* Strategy Tab */}
@@ -4667,6 +4668,548 @@ const Product = () => {
                 <p className="text-sm text-red-800">
                   <strong>Projected Impact:</strong> With Priority 1-6 fixes, success rate can improve from 8.8% to 45-55% (~5x improvement)
                 </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Events Tab */}
+        <TabsContent value="events" className="space-y-6">
+          {/* Header */}
+          <Card className="bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-orange-100 rounded-xl">
+                  <Activity className="w-8 h-8 text-orange-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">VAANI Analytics Events</h2>
+                  <p className="text-gray-600 mt-1">Android event tracking for voice-to-invoice feature (Mixpanel)</p>
+                  <div className="flex gap-2 mt-3">
+                    <Badge className="bg-orange-100 text-orange-800">27 Events</Badge>
+                    <Badge className="bg-amber-100 text-amber-800">35+ Properties</Badge>
+                    <Badge className="bg-red-100 text-red-800">Expense Only (Current)</Badge>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Critical Analysis Section */}
+          <Card className="border-red-200 bg-red-50/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-red-700">
+                <AlertCircle className="w-5 h-5" />
+                Critical Analysis: Multi-Transaction Type Support
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-white p-4 rounded-lg border border-red-200">
+                <h4 className="font-semibold text-red-800 mb-3">Current Issues Identified</h4>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Badge className="bg-red-600 text-white shrink-0">P0</Badge>
+                    <div>
+                      <p className="font-medium text-gray-900">Transaction-specific event names</p>
+                      <p className="text-sm text-gray-600">Events like <code className="bg-gray-100 px-1 rounded">VN_expense_saved</code> and <code className="bg-gray-100 px-1 rounded">VN_expense_cancelled</code> are hardcoded for expense. Need generic <code className="bg-green-100 px-1 rounded">VN_transaction_saved</code> with <code className="bg-blue-100 px-1 rounded">transaction_type</code> property.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Badge className="bg-red-600 text-white shrink-0">P0</Badge>
+                    <div>
+                      <p className="font-medium text-gray-900">Hardcoded use_case_type in events</p>
+                      <p className="text-sm text-gray-600">In <code className="bg-gray-100 px-1 rounded">logVaaniOpened()</code> and <code className="bg-gray-100 px-1 rounded">logSessionStarted()</code>, use_case_type is hardcoded to "Expense". This breaks when payment_in/payment_out are added.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Badge className="bg-orange-600 text-white shrink-0">P1</Badge>
+                    <div>
+                      <p className="font-medium text-gray-900">Missing transaction_type in pipeline events</p>
+                      <p className="text-sm text-gray-600">Events like <code className="bg-gray-100 px-1 rounded">VN_recording_completed</code>, <code className="bg-gray-100 px-1 rounded">VN_voice_processed</code>, <code className="bg-gray-100 px-1 rounded">VN_stt_received</code>, <code className="bg-gray-100 px-1 rounded">VN_ai_data_received</code> don't track which transaction type was being processed.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Badge className="bg-orange-600 text-white shrink-0">P1</Badge>
+                    <div>
+                      <p className="font-medium text-gray-900">Expense-specific properties won't work for other types</p>
+                      <p className="text-sm text-gray-600">Properties like <code className="bg-gray-100 px-1 rounded">VAANI_CATEGORY</code>, <code className="bg-gray-100 px-1 rounded">FINAL_CATEGORY</code>, <code className="bg-gray-100 px-1 rounded">CATEGORY_EDITED</code> are expense-specific. Payment-in/payment-out have different fields (party_name, amount).</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Badge className="bg-yellow-600 text-white shrink-0">P2</Badge>
+                    <div>
+                      <p className="font-medium text-gray-900">UseCaseType object only has Expense</p>
+                      <p className="text-sm text-gray-600">The <code className="bg-gray-100 px-1 rounded">UseCaseType</code> object in VaaniEventConstants.kt only defines "Expense". Need to add "PaymentIn", "PaymentOut", "SaleInvoice", "SaleOrder", "DeliveryChallan".</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Optimization Recommendations */}
+          <Card className="border-green-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-green-700">
+                <Lightbulb className="w-5 h-5" />
+                Optimization Recommendations
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                  <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
+                    <span className="bg-green-600 text-white text-xs px-2 py-0.5 rounded">1</span>
+                    Rename Transaction Events
+                  </h4>
+                  <div className="text-sm space-y-2">
+                    <p className="text-gray-700">Replace expense-specific events with generic ones:</p>
+                    <div className="bg-white p-2 rounded border border-green-300 font-mono text-xs">
+                      <p className="text-red-600 line-through">VN_expense_saved</p>
+                      <p className="text-green-600">VN_transaction_saved + transaction_type: "expense"</p>
+                    </div>
+                    <div className="bg-white p-2 rounded border border-green-300 font-mono text-xs">
+                      <p className="text-red-600 line-through">VN_expense_cancelled</p>
+                      <p className="text-green-600">VN_transaction_cancelled + transaction_type: "expense"</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                  <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
+                    <span className="bg-green-600 text-white text-xs px-2 py-0.5 rounded">2</span>
+                    Add transaction_type to All Events
+                  </h4>
+                  <div className="text-sm space-y-2">
+                    <p className="text-gray-700">Every event should include transaction context:</p>
+                    <div className="bg-white p-2 rounded border border-green-300 font-mono text-xs">
+                      <p className="text-gray-500">// Add to all pipeline events</p>
+                      <p>properties["transaction_type"] = transactionType</p>
+                      <p className="text-gray-400 mt-1">// Values: expense, payment_in, payment_out,</p>
+                      <p className="text-gray-400">// sale_invoice, sale_order, delivery_challan</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                  <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
+                    <span className="bg-green-600 text-white text-xs px-2 py-0.5 rounded">3</span>
+                    Use Generic + Type-Specific Properties
+                  </h4>
+                  <div className="text-sm space-y-2">
+                    <p className="text-gray-700">Base properties + transaction-specific extensions:</p>
+                    <div className="bg-white p-2 rounded border border-green-300 font-mono text-xs space-y-1">
+                      <p className="text-blue-600">// Base (all transactions)</p>
+                      <p>vn_item_count, final_item_count, items_edited</p>
+                      <p>vn_total_amount, final_total_amount</p>
+                      <p className="text-purple-600 mt-2">// Expense-specific</p>
+                      <p>vn_category, final_category, category_edited</p>
+                      <p className="text-orange-600 mt-2">// Payment-specific</p>
+                      <p>vn_party_name, final_party_name, party_edited</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                  <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
+                    <span className="bg-green-600 text-white text-xs px-2 py-0.5 rounded">4</span>
+                    Update UseCaseType Constants
+                  </h4>
+                  <div className="text-sm space-y-2">
+                    <p className="text-gray-700">Add all transaction types:</p>
+                    <div className="bg-white p-2 rounded border border-green-300 font-mono text-xs">
+                      <p>object UseCaseType {"{"}</p>
+                      <p className="ml-4">const val EXPENSE = "expense"</p>
+                      <p className="ml-4 text-green-600">const val PAYMENT_IN = "payment_in"</p>
+                      <p className="ml-4 text-green-600">const val PAYMENT_OUT = "payment_out"</p>
+                      <p className="ml-4 text-green-600">const val SALE_INVOICE = "sale_invoice"</p>
+                      <p className="ml-4 text-green-600">const val SALE_ORDER = "sale_order"</p>
+                      <p className="ml-4 text-green-600">const val DELIVERY_CHALLAN = "delivery_challan"</p>
+                      <p>{"}"}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mt-4">
+                <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                  <Code className="w-4 h-4" />
+                  Recommended Event Logger Refactoring
+                </h4>
+                <p className="text-sm text-gray-700 mb-2">Create transaction-type aware logger methods:</p>
+                <div className="bg-white p-3 rounded border border-blue-300 font-mono text-xs overflow-x-auto">
+                  <pre className="text-gray-800">{`// Before (expense-specific)
+fun logExpenseSaved(vaaniPrefillData: ExpenseTxnPrefillData, ...)
+
+// After (generic with transaction type)
+fun logTransactionSaved(
+    transactionType: String,  // "expense", "payment_in", etc.
+    sessionId: String?,
+    vaaniData: Map<String, Any?>,
+    finalData: Map<String, Any?>,
+    timeToCreate: Long
+)`}</pre>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Event Naming Recommendations */}
+          <Card className="border-purple-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-purple-700">
+                <Wand2 className="w-5 h-5" />
+                Event Naming Recommendations
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left p-2 font-semibold text-gray-700">Current Name</th>
+                      <th className="text-left p-2 font-semibold text-gray-700">Recommended Name</th>
+                      <th className="text-left p-2 font-semibold text-gray-700">Reason</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    <tr>
+                      <td className="p-2 font-mono text-red-600">VN_expense_saved</td>
+                      <td className="p-2 font-mono text-green-600">VN_transaction_saved</td>
+                      <td className="p-2 text-gray-600">Generic for all transaction types</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 font-mono text-red-600">VN_expense_cancelled</td>
+                      <td className="p-2 font-mono text-green-600">VN_transaction_cancelled</td>
+                      <td className="p-2 text-gray-600">Generic for all transaction types</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 font-mono text-orange-600">VN_category_suggestion_selected</td>
+                      <td className="p-2 font-mono text-green-600">VN_field_suggestion_selected</td>
+                      <td className="p-2 text-gray-600">Generic for any field suggestion (category, party, etc.)</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 font-mono text-gray-600">VN_opened</td>
+                      <td className="p-2 font-mono text-gray-600">VN_opened</td>
+                      <td className="p-2 text-green-600">Good - already generic</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 font-mono text-gray-600">VN_session_started</td>
+                      <td className="p-2 font-mono text-gray-600">VN_session_started</td>
+                      <td className="p-2 text-green-600">Good - add transaction_type property</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* All Events Reference */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5 text-blue-500" />
+                Complete Event Reference (27 Events)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {/* Session Events */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <Badge className="bg-blue-100 text-blue-800">Session Events</Badge>
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-blue-600">VN_opened</p>
+                      <p className="text-xs text-gray-600 mt-1">User opens Vaani feature</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: source, used_vn_before, use_case_type</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-blue-600">VN_session_started</p>
+                      <p className="text-xs text-gray-600 mt-1">Vaani session begins</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: use_case_type</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-blue-600">VN_session_ended</p>
+                      <p className="text-xs text-gray-600 mt-1">User exits Vaani</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: none</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recording Events */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <Badge className="bg-green-100 text-green-800">Recording Events</Badge>
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-green-600">VN_mic_button_clicked</p>
+                      <p className="text-xs text-gray-600 mt-1">Mic button pressed</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: mic_status (on/off)</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-green-600">VN_mute_toggle</p>
+                      <p className="text-xs text-gray-600 mt-1">Mute checkbox toggled</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: mute_status, session_id</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-green-600">VN_recording_completed</p>
+                      <p className="text-xs text-gray-600 mt-1">Recording finished</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: session_id, recording_duration_ms, auto_stop</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Processing Events */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <Badge className="bg-purple-100 text-purple-800">Processing Events</Badge>
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-purple-600">VN_audio_uploaded</p>
+                      <p className="text-xs text-gray-600 mt-1">Audio uploaded to S3</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: time_taken_ms, session_id, network_*</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-purple-600">VN_stt_received</p>
+                      <p className="text-xs text-gray-600 mt-1">Speech-to-text received</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: time_taken_ms, session_id, network_*</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-purple-600">VN_voice_processed</p>
+                      <p className="text-xs text-gray-600 mt-1">Voice processing complete</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: session_id, transcript_length</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-purple-600">VN_ai_data_received</p>
+                      <p className="text-xs text-gray-600 mt-1">Invoice data from AI ready</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: time_taken_ms, session_id, network_*</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Transaction Events */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <Badge className="bg-orange-100 text-orange-800">Transaction Events</Badge>
+                    <Badge className="bg-red-100 text-red-600 text-xs">Needs Refactoring</Badge>
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="bg-red-50 p-3 rounded-lg border border-red-200">
+                      <p className="font-mono text-sm font-semibold text-orange-600">VN_expense_saved</p>
+                      <p className="text-xs text-gray-600 mt-1">Expense transaction saved</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: session_id, vn_item_count, final_item_count, items_edited, vn_total_amount, final_total_amount, vn_category, final_category, category_edited, vn_payment_type, final_payment_type, time_to_create_invoice, user_chats_count</p>
+                      <p className="text-xs text-red-600 mt-2 font-medium">Issue: Expense-specific, rename to VN_transaction_saved</p>
+                    </div>
+                    <div className="bg-red-50 p-3 rounded-lg border border-red-200">
+                      <p className="font-mono text-sm font-semibold text-orange-600">VN_expense_cancelled</p>
+                      <p className="text-xs text-gray-600 mt-1">Expense creation cancelled</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: session_id, time_spent_seconds</p>
+                      <p className="text-xs text-red-600 mt-2 font-medium">Issue: Expense-specific, rename to VN_transaction_cancelled</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Suggestion Events */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <Badge className="bg-yellow-100 text-yellow-800">Suggestion Events</Badge>
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-yellow-700">VN_category_suggestion_selected</p>
+                      <p className="text-xs text-gray-600 mt-1">User selects a category suggestion</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: user_selected, server_sent, session_id</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-yellow-700">VN_item_suggestion_selected</p>
+                      <p className="text-xs text-gray-600 mt-1">User selects an item suggestion</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: user_selected, server_sent, session_id</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-yellow-700">VN_payment_type_suggestion_selected</p>
+                      <p className="text-xs text-gray-600 mt-1">User selects payment type</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: user_selected, server_sent, session_id</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Feedback Events */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <Badge className="bg-pink-100 text-pink-800">Feedback Events</Badge>
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-pink-600">VN_feedback</p>
+                      <p className="text-xs text-gray-600 mt-1">User submits star rating</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: stars, session_id</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-pink-600">VN_feedback_closed</p>
+                      <p className="text-xs text-gray-600 mt-1">Feedback dialog dismissed</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: session_id</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-pink-600">VN_feature_feedback</p>
+                      <p className="text-xs text-gray-600 mt-1">User selects feature feedback</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: features, session_id</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-pink-600">VN_feature_feedback_closed</p>
+                      <p className="text-xs text-gray-600 mt-1">Feature feedback dismissed</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: session_id</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-pink-600">VN_exit_feedback</p>
+                      <p className="text-xs text-gray-600 mt-1">User provides exit reasons</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: exit_reasons, session_id</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Error Events */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <Badge className="bg-red-100 text-red-800">Error Events</Badge>
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-red-600">VN_api_error</p>
+                      <p className="text-xs text-gray-600 mt-1">Backend API failure</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: error_type (no_internet, server_error, audio_process_failed), session_id</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-red-600">VN_error_occurred</p>
+                      <p className="text-xs text-gray-600 mt-1">Client-side error</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: error_type (chat_limit_exceeded, time_limit_exceeded, permission_denied), session_id</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Intro Popup Events */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <Badge className="bg-indigo-100 text-indigo-800">Intro Popup Events</Badge>
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-indigo-600">VN_intro_popup_add_manual</p>
+                      <p className="text-xs text-gray-600 mt-1">User chose manual entry</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: none defined in logger</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <p className="font-mono text-sm font-semibold text-indigo-600">VN_intro_popup_use_vaani</p>
+                      <p className="text-xs text-gray-600 mt-1">User chose Vaani</p>
+                      <p className="text-xs text-gray-500 mt-1">Props: none defined in logger</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Properties Reference */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Code className="w-5 h-5 text-purple-500" />
+                Property Reference (35+ Properties)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-gray-800 text-sm">Session & Context</h4>
+                  <div className="space-y-1 text-xs">
+                    <p><code className="bg-gray-100 px-1 rounded">session_id</code> - Unique session identifier</p>
+                    <p><code className="bg-gray-100 px-1 rounded">source</code> - Entry point (home_screen_pop_up, expense_screen, etc.)</p>
+                    <p><code className="bg-gray-100 px-1 rounded">used_vn_before</code> - Has user used Vaani before</p>
+                    <p><code className="bg-gray-100 px-1 rounded">use_case_type</code> - Transaction type</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-gray-800 text-sm">Recording</h4>
+                  <div className="space-y-1 text-xs">
+                    <p><code className="bg-gray-100 px-1 rounded">mic_status</code> - Mic on/off state</p>
+                    <p><code className="bg-gray-100 px-1 rounded">mute_status</code> - Mute checkbox state</p>
+                    <p><code className="bg-gray-100 px-1 rounded">recording_duration_ms</code> - Recording length</p>
+                    <p><code className="bg-gray-100 px-1 rounded">auto_stop</code> - Was recording auto-stopped</p>
+                    <p><code className="bg-gray-100 px-1 rounded">transcript_length</code> - Transcription char count</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-gray-800 text-sm">Performance</h4>
+                  <div className="space-y-1 text-xs">
+                    <p><code className="bg-gray-100 px-1 rounded">time_taken_ms</code> - Operation duration</p>
+                    <p><code className="bg-gray-100 px-1 rounded">time_to_create_invoice</code> - Total creation time</p>
+                    <p><code className="bg-gray-100 px-1 rounded">time_spent_seconds</code> - Session duration</p>
+                    <p><code className="bg-gray-100 px-1 rounded">user_chats_count</code> - Conversation turns</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-gray-800 text-sm">Network</h4>
+                  <div className="space-y-1 text-xs">
+                    <p><code className="bg-gray-100 px-1 rounded">network_ping_ms</code> - Network latency</p>
+                    <p><code className="bg-gray-100 px-1 rounded">network_download_mbps</code> - Download speed</p>
+                    <p><code className="bg-gray-100 px-1 rounded">network_upload_mbps</code> - Upload speed</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-gray-800 text-sm">Transaction Data</h4>
+                  <div className="space-y-1 text-xs">
+                    <p><code className="bg-gray-100 px-1 rounded">vn_item_count</code> - Items from Vaani</p>
+                    <p><code className="bg-gray-100 px-1 rounded">final_item_count</code> - Final item count</p>
+                    <p><code className="bg-gray-100 px-1 rounded">items_edited</code> - Were items modified</p>
+                    <p><code className="bg-gray-100 px-1 rounded">vn_total_amount</code> - Vaani amount</p>
+                    <p><code className="bg-gray-100 px-1 rounded">final_total_amount</code> - Final amount</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-gray-800 text-sm">Expense-Specific</h4>
+                  <div className="space-y-1 text-xs">
+                    <p><code className="bg-gray-100 px-1 rounded">vn_category</code> - Vaani category</p>
+                    <p><code className="bg-gray-100 px-1 rounded">final_category</code> - User's category</p>
+                    <p><code className="bg-gray-100 px-1 rounded">category_edited</code> - Was category changed</p>
+                    <p><code className="bg-gray-100 px-1 rounded">vn_payment_type</code> - Vaani payment</p>
+                    <p><code className="bg-gray-100 px-1 rounded">final_payment_type</code> - User's payment</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Sprint Planning for New Transaction Types */}
+          <Card className="border-blue-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-blue-700">
+                <Rocket className="w-5 h-5" />
+                Sprint Planning: New Transaction Types
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <h4 className="font-semibold text-blue-800 mb-2">Current Sprint: Payment In & Payment Out</h4>
+                  <ul className="text-sm text-gray-700 space-y-1 list-disc ml-4">
+                    <li>Refactor <code className="bg-white px-1 rounded">VN_expense_saved</code> to <code className="bg-white px-1 rounded">VN_transaction_saved</code></li>
+                    <li>Add <code className="bg-white px-1 rounded">transaction_type</code> property to all events</li>
+                    <li>Add payment-specific properties: <code className="bg-white px-1 rounded">vn_party_name</code>, <code className="bg-white px-1 rounded">final_party_name</code>, <code className="bg-white px-1 rounded">party_edited</code></li>
+                    <li>Update <code className="bg-white px-1 rounded">UseCaseType</code> with PAYMENT_IN, PAYMENT_OUT</li>
+                  </ul>
+                </div>
+                <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                  <h4 className="font-semibold text-purple-800 mb-2">Next Sprint: Sale Invoice, Sale Order, Delivery Challan</h4>
+                  <ul className="text-sm text-gray-700 space-y-1 list-disc ml-4">
+                    <li>Add invoice-specific properties: <code className="bg-white px-1 rounded">vn_customer_name</code>, <code className="bg-white px-1 rounded">vn_gst_amount</code>, <code className="bg-white px-1 rounded">vn_discount</code></li>
+                    <li>Add <code className="bg-white px-1 rounded">VN_party_suggestion_selected</code> for customer selection</li>
+                    <li>Update <code className="bg-white px-1 rounded">UseCaseType</code> with SALE_INVOICE, SALE_ORDER, DELIVERY_CHALLAN</li>
+                    <li>Consider <code className="bg-white px-1 rounded">VN_gst_suggestion_selected</code> for GST rate selection</li>
+                  </ul>
+                </div>
               </div>
             </CardContent>
           </Card>
