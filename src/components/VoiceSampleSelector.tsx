@@ -67,6 +67,9 @@ import {
   Check,
   Volume2,
   X,
+  List,
+  CheckCircle,
+  XCircle,
 } from 'lucide-react';
 import {
   Dialog,
@@ -275,6 +278,9 @@ const VoiceSampleSelector: React.FC<VoiceSampleSelectorProps> = ({
 
   /** Controls visibility of the "Audio Not Available" dialog */
   const [showUnavailableDialog, setShowUnavailableDialog] = useState(false);
+
+  /** Controls visibility of the "View All Samples" dialog */
+  const [showAllSamplesDialog, setShowAllSamplesDialog] = useState(false);
 
   /**
    * Map of filename -> boolean indicating if audio file exists.
@@ -492,21 +498,31 @@ const VoiceSampleSelector: React.FC<VoiceSampleSelectorProps> = ({
       <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
         {/* Collapsed state: Minimal inline trigger */}
         {!isExpanded ? (
-          <CollapsibleTrigger asChild>
+          <div className={`flex items-center gap-2 ${className}`}>
+            <CollapsibleTrigger asChild>
+              <button
+                className="flex-1 flex items-center justify-between px-4 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors text-sm"
+                disabled={disabled}
+              >
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Volume2 className="w-4 h-4 text-blue-500" />
+                  <span>{filteredSamples.length} sample voice inputs available</span>
+                </div>
+                <div className="flex items-center gap-2 text-blue-600">
+                  <span className="text-xs">Browse samples</span>
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </button>
+            </CollapsibleTrigger>
             <button
-              className={`w-full flex items-center justify-between px-4 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors text-sm ${className}`}
-              disabled={disabled}
+              onClick={() => setShowAllSamplesDialog(true)}
+              className="flex items-center gap-1.5 px-3 py-2.5 text-xs text-gray-500 hover:text-gray-700 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors"
+              title="View all voice samples"
             >
-              <div className="flex items-center gap-2 text-gray-600">
-                <Volume2 className="w-4 h-4 text-blue-500" />
-                <span>{filteredSamples.length} sample voice inputs available</span>
-              </div>
-              <div className="flex items-center gap-2 text-blue-600">
-                <span className="text-xs">Browse samples</span>
-                <ChevronDown className="w-4 h-4" />
-              </div>
+              <List className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">All</span>
             </button>
-          </CollapsibleTrigger>
+          </div>
         ) : (
           /* Expanded state: Full card with samples */
           <Card className={className}>
@@ -653,6 +669,127 @@ const VoiceSampleSelector: React.FC<VoiceSampleSelectorProps> = ({
               onClick={() => setShowUnavailableDialog(false)}
             >
               <X className="w-4 h-4 mr-2" />
+              Close
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* View All Samples Dialog */}
+      <Dialog open={showAllSamplesDialog} onOpenChange={setShowAllSamplesDialog}>
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <List className="w-5 h-5 text-blue-600" />
+              All Voice Samples
+            </DialogTitle>
+            <DialogDescription className="text-gray-600">
+              Complete catalog of voice samples for testing. Green = available, Red = not yet uploaded.
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Summary Stats */}
+          <div className="flex gap-4 py-3 border-b">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-green-500" />
+              <span className="text-sm text-gray-600">
+                <strong className="text-green-600">
+                  {samples.filter(s => audioAvailability[s.filename]).length}
+                </strong> available
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <XCircle className="w-4 h-4 text-red-400" />
+              <span className="text-sm text-gray-600">
+                <strong className="text-red-500">
+                  {samples.filter(s => !audioAvailability[s.filename]).length}
+                </strong> not uploaded
+              </span>
+            </div>
+            <div className="flex items-center gap-2 ml-auto">
+              <span className="text-sm text-gray-500">
+                Total: <strong>{samples.length}</strong>
+              </span>
+            </div>
+          </div>
+
+          {/* Samples List */}
+          <div className="flex-1 overflow-y-auto py-2 -mx-6 px-6">
+            <div className="space-y-2">
+              {samples.map((sample) => {
+                const isAvailable = audioAvailability[sample.filename];
+                return (
+                  <div
+                    key={sample.filename}
+                    className={`flex items-start gap-3 p-3 rounded-lg border ${
+                      isAvailable
+                        ? 'bg-green-50/50 border-green-200'
+                        : 'bg-red-50/30 border-red-200'
+                    }`}
+                  >
+                    {/* Status Icon */}
+                    <div className="flex-shrink-0 mt-0.5">
+                      {isAvailable ? (
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                      ) : (
+                        <XCircle className="w-4 h-4 text-red-400" />
+                      )}
+                    </div>
+
+                    {/* Sample Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap gap-1.5 mb-1">
+                        <Badge variant="outline" className="text-xs">
+                          {sample.transaction_type}
+                        </Badge>
+                        <Badge className={`text-xs ${LANGUAGE_COLORS[sample.language] || 'bg-gray-100'}`}>
+                          {sample.language}
+                        </Badge>
+                        <Badge className={`text-xs ${COMPLEXITY_COLORS[sample.complexity] || 'bg-gray-100'}`}>
+                          {sample.complexity}
+                        </Badge>
+                        <Badge variant="outline" className="text-xs text-gray-500">
+                          <Clock className="w-3 h-3 mr-1" />
+                          {formatDuration(sample.duration_seconds)}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-gray-700 line-clamp-1">
+                        {sample.description}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5 font-mono">
+                        {sample.filename}
+                      </p>
+                    </div>
+
+                    {/* Play Button (if available) */}
+                    {isAvailable && (
+                      <button
+                        onClick={() => handlePlayPause(sample)}
+                        className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                          playingSample === sample.filename
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                        }`}
+                      >
+                        {playingSample === sample.filename ? (
+                          <Pause className="w-3.5 h-3.5" />
+                        ) : (
+                          <Play className="w-3.5 h-3.5 ml-0.5" />
+                        )}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="flex justify-end pt-3 border-t">
+            <Button
+              variant="outline"
+              onClick={() => setShowAllSamplesDialog(false)}
+            >
               Close
             </Button>
           </div>
