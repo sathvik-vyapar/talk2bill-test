@@ -855,38 +855,34 @@ const Talk2Bill: React.FC = () => {
         </Alert>
       )}
 
-      {/* Transaction Type Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Transaction Type</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <RadioGroup
-            value={transactionType.toString()}
-            onValueChange={(value) => setTransactionType(Number(value) as TransactionType)}
-            className="space-y-3"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value={TransactionType.PAYMENT_IN.toString()} id="payment-in" />
-              <Label htmlFor="payment-in" className="font-normal cursor-pointer">
-                Payment In
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value={TransactionType.PAYMENT_OUT.toString()} id="payment-out" />
-              <Label htmlFor="payment-out" className="font-normal cursor-pointer">
-                Payment Out
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value={TransactionType.EXPENSE.toString()} id="expense" />
-              <Label htmlFor="expense" className="font-normal cursor-pointer">
-                Expense (Default)
-              </Label>
-            </div>
-          </RadioGroup>
-        </CardContent>
-      </Card>
+      {/* Transaction Type Selection - Compact horizontal layout */}
+      <div className="flex items-center gap-3 flex-wrap">
+        <span className="text-sm text-gray-500">Type:</span>
+        <RadioGroup
+          value={transactionType.toString()}
+          onValueChange={(value) => setTransactionType(Number(value) as TransactionType)}
+          className="flex items-center gap-4"
+        >
+          <div className="flex items-center space-x-1.5">
+            <RadioGroupItem value={TransactionType.EXPENSE.toString()} id="expense" />
+            <Label htmlFor="expense" className="text-sm font-normal cursor-pointer">
+              Expense
+            </Label>
+          </div>
+          <div className="flex items-center space-x-1.5">
+            <RadioGroupItem value={TransactionType.PAYMENT_IN.toString()} id="payment-in" />
+            <Label htmlFor="payment-in" className="text-sm font-normal cursor-pointer">
+              Payment In
+            </Label>
+          </div>
+          <div className="flex items-center space-x-1.5">
+            <RadioGroupItem value={TransactionType.PAYMENT_OUT.toString()} id="payment-out" />
+            <Label htmlFor="payment-out" className="text-sm font-normal cursor-pointer">
+              Payment Out
+            </Label>
+          </div>
+        </RadioGroup>
+      </div>
 
       {/*
         Voice Sample Selector Component
@@ -914,116 +910,118 @@ const Talk2Bill: React.FC = () => {
         disabled={isRecording || isUploading || isPolling}
       />
 
-      {/* Recording/Upload Section */}
-      <Card className="border-2 border-dashed border-gray-200">
-        <CardContent className="p-6">
-          <div className="text-center space-y-4">
-            {!audioUrl ? (
-              <>
-                <div className="flex flex-col items-center gap-4">
-                  <button
-                    onClick={isRecording ? stopRecording : startRecording}
-                    disabled={isUploading || isPolling}
-                    className={`w-24 h-24 rounded-full flex items-center justify-center transition-all ${
-                      isRecording
-                        ? 'bg-red-500 hover:bg-red-600 animate-pulse'
-                        : 'bg-blue-500 hover:bg-blue-600'
-                    } text-white shadow-lg hover:shadow-xl`}
-                  >
-                    {isRecording ? <Square className="w-8 h-8" /> : <Mic className="w-10 h-10" />}
-                  </button>
+      {/* Recording/Upload Section - Compact design */}
+      <Card className="border border-gray-200">
+        <CardContent className="p-4">
+          {!audioUrl ? (
+            <div className="flex items-center gap-4">
+              {/* Mic Button */}
+              <button
+                onClick={isRecording ? stopRecording : startRecording}
+                disabled={isUploading || isPolling}
+                className={`flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center transition-all ${
+                  isRecording
+                    ? 'bg-red-500 hover:bg-red-600 animate-pulse'
+                    : 'bg-blue-500 hover:bg-blue-600'
+                } text-white shadow-md hover:shadow-lg`}
+              >
+                {isRecording ? <Square className="w-5 h-5" /> : <Mic className="w-6 h-6" />}
+              </button>
 
-                  {isRecording && (
+              {/* Recording State / Instructions */}
+              <div className="flex-1 min-w-0">
+                {isRecording ? (
+                  <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2 text-red-600">
-                      <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-                      <span className="font-mono text-2xl">{formatTime(recordingTime)}</span>
+                      <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                      <span className="font-mono text-lg font-medium">{formatTime(recordingTime)}</span>
                     </div>
-                  )}
-
-                  <p className="text-gray-500 text-sm">
-                    {isRecording ? 'Click to stop recording' : 'Click to start recording'}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-4 my-6">
-                  <div className="flex-1 h-px bg-gray-200" />
-                  <span className="text-gray-400 text-sm">or</span>
-                  <div className="flex-1 h-px bg-gray-200" />
-                </div>
-
-                <div
-                  onDrop={handleDrop}
-                  onDragOver={(e) => e.preventDefault()}
-                  onDragLeave={(e) => e.preventDefault()}
-                  onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 cursor-pointer transition-all hover:border-gray-400 hover:bg-gray-50"
-                >
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="audio/*"
-                    onChange={handleFileInputChange}
-                    className="hidden"
-                  />
-                  <Upload className="w-10 h-10 mx-auto mb-3 text-gray-400" />
-                  <p className="text-gray-600 font-medium">Drag & drop an audio file</p>
-                  <p className="text-gray-400 text-sm mt-1">or click to browse (MP3, WAV, etc.)</p>
-                </div>
-              </>
-            ) : (
-              <div className="space-y-4">
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                      <FileAudio className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div className="text-left">
-                      <p className="font-medium text-gray-900">{audioFileName}</p>
-                      {recordingTime > 0 && (
-                        <p className="text-sm text-gray-500">Duration: {formatTime(recordingTime)}</p>
-                      )}
-                    </div>
+                    <span className="text-sm text-gray-500">Recording... Click to stop</span>
                   </div>
-                  <audio src={audioUrl} controls className="w-full" />
-                </div>
-
-                <div className="flex justify-center gap-3">
-                  <Button
-                    onClick={() => {
-                      if (audioUrl) URL.revokeObjectURL(audioUrl);
-                      setAudioUrl(null);
-                      setJobStatus(null);
-                      setTranscription(null);
-                      setQuestion(null);
-                      setInvoice(null);
-                    }}
-                    variant="outline"
-                    disabled={isUploading || isPolling}
-                  >
-                    <RotateCcw className="w-4 h-4 mr-2" />
-                    Start Over
-                  </Button>
-                  <Button
-                    onClick={handleUploadAndProcess}
-                    disabled={isUploading || isPolling}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    {isUploading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="w-4 h-4 mr-2" />
-                        Upload & Process
-                      </>
-                    )}
-                  </Button>
-                </div>
+                ) : (
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Click mic to record</p>
+                    <p className="text-xs text-gray-400">or drag & drop an audio file</p>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+
+              {/* Upload Button */}
+              <div
+                onDrop={handleDrop}
+                onDragOver={(e) => e.preventDefault()}
+                onDragLeave={(e) => e.preventDefault()}
+                onClick={() => fileInputRef.current?.click()}
+                className="flex-shrink-0"
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="audio/*"
+                  onChange={handleFileInputChange}
+                  className="hidden"
+                />
+                <Button variant="outline" size="sm" className="gap-1.5">
+                  <Upload className="w-4 h-4" />
+                  Upload
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {/* Audio Preview - Compact */}
+              <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                <div className="p-1.5 bg-blue-100 rounded">
+                  <FileAudio className="w-4 h-4 text-blue-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">{audioFileName}</p>
+                  {recordingTime > 0 && (
+                    <p className="text-xs text-gray-500">{formatTime(recordingTime)}</p>
+                  )}
+                </div>
+                <audio src={audioUrl} controls className="h-8 max-w-[200px]" />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-2">
+                <Button
+                  onClick={() => {
+                    if (audioUrl) URL.revokeObjectURL(audioUrl);
+                    setAudioUrl(null);
+                    setJobStatus(null);
+                    setTranscription(null);
+                    setQuestion(null);
+                    setInvoice(null);
+                  }}
+                  variant="ghost"
+                  size="sm"
+                  disabled={isUploading || isPolling}
+                >
+                  <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+                  Reset
+                </Button>
+                <Button
+                  onClick={handleUploadAndProcess}
+                  disabled={isUploading || isPolling}
+                  size="sm"
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-3.5 h-3.5 mr-1.5" />
+                      Process
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
