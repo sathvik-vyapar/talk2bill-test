@@ -39,9 +39,12 @@ import {
   Sparkles,
   AlertCircle,
   Check,
-  RotateCcw
+  RotateCcw,
+  Filter,
 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import VoiceSampleSelector, { VoiceSample } from '@/components/VoiceSampleSelector';
 
 // =============================================================================
 // TYPE DEFINITIONS
@@ -186,6 +189,7 @@ const AudioTranscription: React.FC = () => {
   const [audioFileName, setAudioFileName] = useState<string>('recording.wav');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [selectedTransactionType, setSelectedTransactionType] = useState<string>('all');
 
   // Refs
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -559,6 +563,37 @@ const AudioTranscription: React.FC = () => {
   const clearHistory = () => {
     setSessionHistory([]);
     localStorage.removeItem('stt-session-history');
+  };
+
+  /**
+   * Handles selection of a voice sample
+   */
+  const handleVoiceSampleSelect = async (sample: VoiceSample, audioUrl: string | null) => {
+    if (!audioUrl) return;
+
+    // Clean up previous audio
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+    }
+
+    try {
+      // Fetch the audio file and create a blob URL
+      const response = await fetch(audioUrl);
+      if (!response.ok) {
+        throw new Error('Failed to fetch audio sample');
+      }
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      setAudioUrl(blobUrl);
+      setAudioFileName(sample.filename);
+      setRecordingTime(sample.duration_seconds);
+      setError(null);
+      setSuccessMessage(`Loaded sample: ${sample.description}`);
+    } catch (err) {
+      setError('Failed to load voice sample. Please try again.');
+      console.error('Error loading voice sample:', err);
+    }
   };
 
   // ---------------------------------------------------------------------------
@@ -960,6 +995,47 @@ const AudioTranscription: React.FC = () => {
 
       {/* Workflow Steps */}
       {renderWorkflowSteps()}
+
+      {/* Transaction Type Filter and Voice Samples */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Transaction Type Filter */}
+        <Card className="lg:col-span-1">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Filter className="w-4 h-4 text-gray-600" />
+              Filter Samples
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Select
+              value={selectedTransactionType}
+              onValueChange={setSelectedTransactionType}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="All Transaction Types" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="Expense">Expense</SelectItem>
+                <SelectItem value="Sale">Sale</SelectItem>
+                <SelectItem value="Payment In">Payment In</SelectItem>
+                <SelectItem value="Payment Out">Payment Out</SelectItem>
+                <SelectItem value="Sale Order">Sale Order</SelectItem>
+                <SelectItem value="Delivery Challan">Delivery Challan</SelectItem>
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
+
+        {/* Voice Sample Selector */}
+        <div className="lg:col-span-2">
+          <VoiceSampleSelector
+            transactionType={selectedTransactionType}
+            onSelectSample={handleVoiceSampleSelect}
+            disabled={isRecording || isProcessing}
+          />
+        </div>
+      </div>
 
       {/* Success Message */}
       {successMessage && (

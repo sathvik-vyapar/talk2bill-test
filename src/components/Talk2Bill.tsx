@@ -40,6 +40,7 @@ import {
 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import VoiceSampleSelector, { VoiceSample } from '@/components/VoiceSampleSelector';
 
 // =============================================================================
 // TYPE DEFINITIONS
@@ -777,6 +778,37 @@ const Talk2Bill: React.FC = () => {
     setShowHistory(!showHistory);
   };
 
+  /**
+   * Handles selection of a voice sample
+   */
+  const handleVoiceSampleSelect = async (sample: VoiceSample, audioUrl: string | null) => {
+    if (!audioUrl) return;
+
+    // Clean up previous audio
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+    }
+
+    try {
+      // Fetch the audio file and create a blob URL
+      const response = await fetch(audioUrl);
+      if (!response.ok) {
+        throw new Error('Failed to fetch audio sample');
+      }
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      setAudioUrl(blobUrl);
+      setAudioFileName(sample.filename);
+      setRecordingTime(sample.duration_seconds);
+      setError(null);
+      setSuccessMessage(`Loaded sample: ${sample.description}`);
+    } catch (err) {
+      setError('Failed to load voice sample. Please try again.');
+      console.error('Error loading voice sample:', err);
+    }
+  };
+
   // ---------------------------------------------------------------------------
   // RENDER
   // ---------------------------------------------------------------------------
@@ -836,6 +868,13 @@ const Talk2Bill: React.FC = () => {
           </RadioGroup>
         </CardContent>
       </Card>
+
+      {/* Voice Sample Selector */}
+      <VoiceSampleSelector
+        transactionType={transactionType.toString()}
+        onSelectSample={handleVoiceSampleSelect}
+        disabled={isRecording || isUploading || isPolling}
+      />
 
       {/* Recording/Upload Section */}
       <Card className="border-2 border-dashed border-gray-200">
